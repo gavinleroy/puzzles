@@ -55,5 +55,6 @@ int main(void){
 			aa[b].ee.push_back(temp1);
 		}
 		printf("%d\n", bfs(aa, 1));		
+		delete []aa;
 	}
 }
