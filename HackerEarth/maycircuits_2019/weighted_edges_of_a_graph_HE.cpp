@@ -60,6 +60,7 @@ int main(void){
 	for(ll i = n; i > 0; i--){
 		ll poss = (MAX_W - mm[i].w) + 2LL;
 		ll expo = (i - 1LL - mm[i].a);
+//		printf("Poss: %lld, Exponent: %lld, ans: %lld\n", poss, expo, exp(poss, expo, MOD));
 		ans = (ans * (exp(poss, expo, MOD)) % MOD) % MOD;
 	}
 	printf("%lld\n", (ans) % MOD);
