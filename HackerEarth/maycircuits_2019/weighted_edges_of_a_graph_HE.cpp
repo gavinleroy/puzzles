@@ -2,23 +2,23 @@
 #include <algorithm>
 #define MOD 987654319
 #define MAX_N 300001
-
+ 
 typedef long long ll;
-
+ 
 using namespace std;
-
+ 
 struct node{
 	ll i = -1;
 	ll w = -1;
 	ll a = 0;
 };
-
+ 
 struct edge{
 	ll n1;
 	ll n2;
 	ll w;
 };
-
+ 
 ll exp(ll x, ll y, ll p){ 
     ll res = 1LL;
     x = x % p;  
@@ -30,12 +30,12 @@ ll exp(ll x, ll y, ll p){
     } 
     return res; 
 } 
-
+ 
 auto cmp = [](const node a, const node b){
 	if(a.w == b.w) return a.i < b.i;
 	else return a.w < b.w;
 };
-
+ 
 int main(void){
 	ll n, MAX_W, ans = 1;
 	scanf("%lld %lld", &n, &MAX_W);
@@ -57,13 +57,14 @@ int main(void){
 		else mm[ee[i].n2].a++;
 	}
 	sort(mm+1, mm+n+1, cmp);
+	// This solution doesn't work because it is not finding the max weight on the path between the two nodes, rather the maximum weighted adjacent edge. First you need to find the max on the path, then calculate the answer.
 	for(ll i = n; i > 0; i--){
 		ll poss = (MAX_W - mm[i].w) + 2LL;
 		ll expo = (i - 1LL - mm[i].a);
 //		printf("Poss: %lld, Exponent: %lld, ans: %lld\n", poss, expo, exp(poss, expo, MOD));
 		ans = (ans * (exp(poss, expo, MOD)) % MOD) % MOD;
 	}
-	printf("%lld\n", (ans) % MOD);
+	printf("%lld\n", (ans * 3) % MOD);
 	delete []mm;
 	delete []ee;
 	return 0;
