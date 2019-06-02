@@ -8,14 +8,15 @@ using namespace std;
 int main(void){
 	int n;
 	scanf("%d", &n);
-	ll* aa = new ll[n];
-
+	ll t0, t1, tc;
 	for(int i = 0; i < n; i++){
-		scanf("%lld", aa+i);
-		if(i > 1) aa[i] = max(max(aa[i-2] + aa[i], aa[i]), aa[i-1]);
-		else if(i == 1) aa[i] = max(aa[i], aa[i-1]);
+		t0 = t1;
+		t1 = tc;
+		scanf("%lld", &tc);
+		if(i > 1) tc = max(max(t0 + tc, tc), t1);
+		else if(i == 1) tc = max(tc, t1);
+
 	}
-	printf("%lld\n", aa[n-1]);
-	delete []aa;
+	printf("%lld\n", tc);
 	return 0;
 }
