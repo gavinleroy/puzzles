@@ -37,7 +37,7 @@ auto cmp = [](const node a, const node b){
 };
  
 int main(void){
-	ll n, MAX_W, ans = 1;
+	ll n, MAX_W, ans = 1, ma = 0;
 	scanf("%lld %lld", &n, &MAX_W);
 	node* mm = new node[MAX_N];
 	edge* ee = new edge[MAX_N];
@@ -46,12 +46,16 @@ int main(void){
 		scanf("%lld %lld %lld", &t1, &t2, &ee[i].w);
 		ee[i].n1 = min(t1, t2);
 		ee[i].n2 = max(t1, t2);
-		ee[i].w = ((ee[i].w <= MAX_W) ? ee[i].w: MAX_W);
 		if(ee[i].w > mm[ee[i].n1].w) mm[ee[i].n1].w = ee[i].w;
 		if(ee[i].w > mm[ee[i].n2].w) mm[ee[i].n2].w = ee[i].w;
 		mm[ee[i].n2].i = ee[i].n2;
 		mm[ee[i].n1].i = ee[i].n1;
+		ma = max(ma, ee[i].w);
 	}	
+	if(MAX_W < ma) {
+		printf("0\n");
+		return 0;
+	}
 	for(int i = 1; i < n; i++){
 		if(mm[ee[i].n1].w > mm[ee[i].n2].w) mm[ee[i].n1].a++;
 		else mm[ee[i].n2].a++;
@@ -64,7 +68,7 @@ int main(void){
 //		printf("Poss: %lld, Exponent: %lld, ans: %lld\n", poss, expo, exp(poss, expo, MOD));
 		ans = (ans * (exp(poss, expo, MOD)) % MOD) % MOD;
 	}
-	printf("%lld\n", (ans * 3) % MOD);
+	printf("%lld\n", (ans) % MOD);
 	delete []mm;
 	delete []ee;
 	return 0;
