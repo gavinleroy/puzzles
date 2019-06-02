@@ -1,25 +1,21 @@
 #include <cstdio>
+#include <utility>
+#include <vector>
 #include <algorithm>
-#define MOD 987654319
-#define MAX_N 300001
- 
+#define F first
+#define S second
+
 typedef long long ll;
- 
+
+const ll MOD = 987654319;
+
 using namespace std;
- 
-struct node{
-	ll i = -1;
-	ll w = -1;
-	ll a = 0;
-};
- 
-struct edge{
-	ll n1;
-	ll n2;
-	ll w;
-};
- 
-ll exp(ll x, ll y, ll p){ 
+
+ll* rr = new ll[300001]; 
+ll* pp = new ll[300001]; 
+ll* cc = new ll[300001];
+
+ll power(ll x, ll y, ll p){ 
     ll res = 1LL;
     x = x % p;  
     while (y > 0LL){ 
@@ -30,46 +26,60 @@ ll exp(ll x, ll y, ll p){
     } 
     return res; 
 } 
- 
-auto cmp = [](const node a, const node b){
-	if(a.w == b.w) return a.i < b.i;
-	else return a.w < b.w;
-};
- 
+
+ll find(ll n){
+	if(pp[n] != n)
+		pp[n] = find(pp[n]);
+	return pp[n];
+}
+
+void u_nion(ll l, ll r){
+//	printf("Inside Union, L: %lld, R: %lld\n", l, r);
+    	ll l_ = find(l);
+    	ll r_ = find(r);
+//	printf("The parent of l is: %lld, r: %lld\n", l_, r_); 
+//	printf("The Rank of the parents are: rr[l_]: %lld, rr[r_]: %lld\n", rr[l_], rr[r_]);
+    	if(l_ == r_) return;
+    	if(rr[l_] < rr[r_]){
+        	pp[l_] = r_;
+        	cc[r_] = cc[r_] + cc[l_];
+    	}else if(rr[l_] > rr[r_]){
+        	pp[r_] = l_;
+        	cc[l_] = cc[l_] + cc[r_];
+    	}else{
+        	pp[r_] = l_;
+        	rr[l_]++;
+        	cc[l_] = cc[l_] + cc[r_];
+    	}
+}
+
 int main(void){
-	ll n, MAX_W, ans = 1, ma = 0;
+	ll n, MAX_W, ans = 1;
 	scanf("%lld %lld", &n, &MAX_W);
-	node* mm = new node[MAX_N];
-	edge* ee = new edge[MAX_N];
-	for(int i = 1; i < n; i++){
-		ll t1, t2;
-		scanf("%lld %lld %lld", &t1, &t2, &ee[i].w);
-		ee[i].n1 = min(t1, t2);
-		ee[i].n2 = max(t1, t2);
-		if(ee[i].w > mm[ee[i].n1].w) mm[ee[i].n1].w = ee[i].w;
-		if(ee[i].w > mm[ee[i].n2].w) mm[ee[i].n2].w = ee[i].w;
-		mm[ee[i].n2].i = ee[i].n2;
-		mm[ee[i].n1].i = ee[i].n1;
-		ma = max(ma, ee[i].w);
+	pair<ll, pair<ll, ll>> ii[n-1];
+	for(int i = 0; i < n-1; i++){
+		ll l, r, w;
+		scanf("%lld %lld %lld", &l, &r, &w);
+		ii[i] = make_pair(w, make_pair(l, r));
+		if(w > MAX_W){ printf("0"); return 0;}	
+	}
+	sort(ii, ii + (n-1));
+	for(int i = 1; i <= n; i++){
+		rr[i] = 0LL;
+		pp[i] = i;
+		cc[i] = 1LL;
 	}	
-	if(MAX_W < ma) {
-		printf("0\n");
-		return 0;
+	for(int i = 0; i < n-1; i++){
+		ll l = ii[i].S.F, r = ii[i].S.S;
+		ll l_ = find(l), r_ = find(r);	
+		ll t = (cc[l_]*cc[r_]) - 1;
+//		printf("\n\nl: %lld, r: %lld, l_: %lld, r_: %lld, t: %lld\n", l, r, l_, r_, t);
+		ans = (ans * power(MAX_W - ii[i].F + 2, t, MOD)) % MOD;
+		u_nion(l, r);
 	}
-	for(int i = 1; i < n; i++){
-		if(mm[ee[i].n1].w > mm[ee[i].n2].w) mm[ee[i].n1].a++;
-		else mm[ee[i].n2].a++;
-	}
-	sort(mm+1, mm+n+1, cmp);
-	// This solution doesn't work because it is not finding the max weight on the path between the two nodes, rather the maximum weighted adjacent edge. First you need to find the max on the path, then calculate the answer.
-	for(ll i = n; i > 0; i--){
-		ll poss = (MAX_W - mm[i].w) + 2LL;
-		ll expo = (i - 1LL - mm[i].a);
-//		printf("Poss: %lld, Exponent: %lld, ans: %lld\n", poss, expo, exp(poss, expo, MOD));
-		ans = (ans * (exp(poss, expo, MOD)) % MOD) % MOD;
-	}
-	printf("%lld\n", (ans) % MOD);
-	delete []mm;
-	delete []ee;
+	printf("%lld\n", ans);
+	delete []rr;
+	delete []pp;
+	delete []cc;
 	return 0;
 }
