@@ -103,17 +103,22 @@ static inline ll pw(ll a, ll n, ll mod) {
 using namespace std;
 
 int solve(string s){
-	int a = 0, b = 0;
+	int sad = 0, sbd = 0;
+	bool sad_a = true, sbd_b = true;
 	for(int i = 0; i < s.size(); i++){
-		if(s[i] == 'A') a++;
-		else if(s[i] == 'B') b++;
-		else throw "Not an A or B.";
+		if(s[i] == 'A'){
+			if(sad_a) sad_a = !sad_a;
+			else sad++;
+			if(!sbd_b) sbd_b = !sbd_b;
+			else sbd++;
+		}else if(s[i] == 'B'){
+			if(!sad_a) sad_a = !sad_a;
+			else sad++;
+			if(sbd_b) sbd_b = !sbd_b;
+			else sbd++;
+		}
 	}
-	if(a == b) return 0;
-	else if(abs(a-b) == 1) return 0;
-	else{
-		return abs(a - b) - 1;
-	}
+	return min(sad, sbd);
 }
 
 int main(void){BOOST
