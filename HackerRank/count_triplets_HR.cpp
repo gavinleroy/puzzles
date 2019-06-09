@@ -115,32 +115,17 @@ static inline ll ncr(ll n, ll r) {
 
 using namespace std;
 
-ll solve(double* aa, int n, double r){
-	vector<int>* pp = new vector<int>[50];
+ll solve(int n, int r){
 	ll ret = 0;
+	map<int, ll> mm1, mm2;
 	for(int i = 0; i < n; i++){
-		double temp;
-		if((int)aa[i] == 1) pp[0].push_back(i);
-		if(aa[i] >= r) temp = log(aa[i])/log(r);	
-		else continue;
-		if(pw(r, (int)temp) == aa[i]) pp[(int)temp].push_back(i);
+		int temp;
+		cin >> temp;
+		if(mm2.count(temp)) ret += mm2[temp];
+		if(mm1.count(temp)) mm2[temp*r] += mm1[temp];
+		mm1[temp*r]++;
 	}
-	for(int i = 0; i < 48; i++){
-		int ind_1 = 0, ind_2 = 0;
-		cout << pp[i].size() << endl;
-		for(int j = 0; j < pp[i].size(); j++){			
-			while(ind_1 < pp[i+1].size() && pp[i+1][ind_1] < pp[i][j]) ind_1++;
-			while(ind_2 < pp[i+2].size() && pp[i+2][ind_2] < pp[i][j]) ind_2++;
-			ret += (ll)((ll)(pp[i+1].size() - ind_1) * (ll)(pp[i+2].size() - ind_2));
-		}
-	}
-	delete []pp;
 	return ret;
-}
-
-
-ll solve_1(ll n){
-	return ncr(n, 3);
 }
 
 int main(void){BOOST
@@ -149,12 +134,9 @@ int main(void){BOOST
 		freopen("input.1", "r", stdin);
 	#endif
 	int n;
-	double r;
+	int r;
 	cin >> n >> r;
-	double* aa = new double[n];
-	for(int i = 0; i < n; i++) cin >> aa[i];
-	cout << ((r == 1) ? solve_1(n) : solve(aa, n, r)) << endl;
-	delete []aa;
+	cout << solve(n, r) << endl;
 	print_time("Time: ");
 	return 0;
 }
