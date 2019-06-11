@@ -104,34 +104,32 @@ static inline ll pw(ll a, ll n, ll mod) {
 using namespace std;
 
 ull find_sum(ull n){
-	ull temp = (n/10)*10;
-	return n-temp;
-}
-
-bool is_right(ull n){
 	ull sum = 0;
 	while(n > 0){
-		sum += find_sum(n);
-		n/=10;	
+		sum += n%10;
+		n /= 10;
 	}
-	return sum%10==0;
+	return sum;
 }
 
 ull solve(ull n){
-	ull t = 19ULL + ((n-1ULL)*9ULL);
-	float t1 = log10(t);
-	ull f = t1 - 1ULL;
-	ull fin = t+(f*9ULL);
-	while(!is_right(fin)) fin += 9ULL;
-	return fin;
+	ull sum = find_sum(n);
+	ull tn = (10ULL - (sum % 10ULL)) % 10ULL;
+	return (10ULL * n) + tn;
 }
+
+ull aa[] = {0,19,28,37,46,55,64,73,82,91,109,118,127,136,145,
+ 154,163,172,181,190,208,217,226,235,244,253,262,
+ 271,280,299,307,316,325,334,343,352,361,370,389,
+ 398,406,415,424,433,442,451,460,479,488,497,505,
+ 514,523,532,541};
 
 int main(void){BOOST
 	init_time();
 	#ifdef LOCAL
 		freopen("input.1", "r", stdin);
 	#endif
-	int t, n;
+	ull t, n;
 	cin >> t;
 	while(t--){
 		cin >> n;
