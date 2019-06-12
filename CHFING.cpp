@@ -28,6 +28,7 @@
 #define MIN_INT (1 << 31)
 #define MAX_LL ~(1 << 63)
 #define MIN_LL (1 << 63)
+#define MOD 1000000007
 
 typedef long long ll;
 typedef unsigned long long ull;
@@ -108,7 +109,16 @@ int main(void){BOOST
 	#ifdef LOCAL
 		freopen("input.1", "r", stdin);
 	#endif
-
+	int t;
+	ull n, k;
+	cin >> t;
+	while(t--){
+		ull res = 0;
+		cin >> n >> k;
+		res = (res + (k-1ULL)) % MOD;
+		if(k > n) res = (res + (k - n)) % MOD;
+		cout << res << endl;
+	}
 	print_time("Time: ");
 	return 0;
 }
