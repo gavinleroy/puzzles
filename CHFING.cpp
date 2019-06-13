@@ -104,6 +104,12 @@ static inline ll pw(ll a, ll n, ll mod) {
 
 using namespace std;
 
+ull solve(ull k, ull n){
+	ull ret = k-1;
+	if(k > n) ret = (ret + (((k-n) * ((k-n) + 1)) / 2) ) % MOD;	
+	return ret;
+}
+
 int main(void){BOOST
 	init_time();
 	#ifdef LOCAL
@@ -115,9 +121,7 @@ int main(void){BOOST
 	while(t--){
 		ull res = 0;
 		cin >> n >> k;
-		res = (res + (k-1ULL)) % MOD;
-		if(k > n) res = (res + (k - n)) % MOD;
-		cout << res << endl;
+		cout << solve(k, n) << endl;
 	}
 	print_time("Time: ");
 	return 0;
