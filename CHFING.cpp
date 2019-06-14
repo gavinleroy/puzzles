@@ -28,10 +28,11 @@
 #define MIN_INT (1 << 31)
 #define MAX_LL ~(1 << 63)
 #define MIN_LL (1 << 63)
-#define MOD 1000000007
+//#define MOD 1000000007
 
 typedef long long ll;
 typedef unsigned long long ull;
+const ll MOD = 1000000007;
 
 template<typename T>
 static inline T gcd(T a, T b) {
@@ -102,12 +103,48 @@ static inline ll pw(ll a, ll n, ll mod) {
     return ret;
 }
 
+template <class T>
+inline static T mul(T a, T b, T mod) { 
+    T res = T(0); 
+    a = a % mod; 
+    while (b > 0){ 
+        if ((b & 1) == 0) 
+            res = (res + a) % mod; 
+        a = (a << 1) % mod; 
+        b >>= 1; 
+    } 
+    return res % mod; 
+} 
+
 using namespace std;
 
-ull solve(ull k, ull n){
-	ull ret = k-1;
-	if(k > n) ret = (ret + (((k-n) * ((k-n) + 1)) / 2) ) % MOD;	
-	return ret;
+ll solve(ll k, ll n){
+	ll ret = (k-1LL) % MOD;
+	ll i = ((k-n)/(n-1LL)) + (((k-n)%(n-1LL) == 0LL) ? 0LL: 1LL);	
+	if(k > n){
+		ll f = -1LL*(n - 1LL);
+		ll s = (i*(i+1LL))/2LL;
+		ll l = i*(k-1LL);
+//		cout << "f: " << f << " s: " << s << " l: " << l << endl;
+//		cout << "ret_before: " << ret;
+		ret = (ret + ((f*s) + l) % MOD) % MOD;
+//		cout << " after: " << ret << endl;
+//		cout << "adding: " << ((mul(f,s, MOD) % MOD) + l) % MOD << endl;
+//		cout << "f*s: " << mmm(f, s, MOD) << " l: " << l << endl;
+	}
+	return ret % MOD;
+}
+
+ll solve_2(ll k, ll n){
+	ll ret = k-1, t = 0;
+	ll i = 1;
+	while(k > n){
+		ll temp = (k*(i+1)) - ((k+n-1)*i) - 1;
+		if(temp <= 0) break;
+		t = (t + (ll)temp) % MOD;
+		i++;
+	}
+	return (ret + t) % MOD;
 }
 
 int main(void){BOOST
@@ -116,12 +153,22 @@ int main(void){BOOST
 		freopen("input.1", "r", stdin);
 	#endif
 	int t;
-	ull n, k;
-	cin >> t;
-	while(t--){
-		ull res = 0;
-		cin >> n >> k;
-		cout << solve(k, n) << endl;
+	ll n, k;
+//	cin >> t;
+//	while(t--){
+//		cin >> n >> k;
+//		cout << solve(k, n) << endl;
+//	}
+	for(ll i = 7373633; i > 100000; i--){
+		for(ll j = 139029299; j > 2; j--){
+			ll ans = solve(i, j);
+			ll ans_1 = solve_2(i, j);
+			if(ans != ans_1){ 
+				cout << "Broke (k, n)-> " << i << " " << j << endl;
+				cout << "Optimized: " << ans << " Non: " << ans_1 << endl;
+				return 0;
+			}
+		}
 	}
 	print_time("Time: ");
 	return 0;
