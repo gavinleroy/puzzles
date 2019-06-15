@@ -122,28 +122,29 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
-int aa[100001], pp[100001], cc[100001];
+const ll _MAX = 500001;
+
+int aa[_MAX], pp[_MAX], cc[_MAX];
 
 void sieve() {
-    for (int i = 2; i * i <= 100001; i++) {
+    for (int i = 2; i * i <= _MAX; i++) {
         if (!pp[i])
-            for (int j = i * 2; j <= 100001; j += i)
+            for (int j = i * 2; j <= _MAX; j += i)
                 pp[j] = i;
     }
-    for (int i = 1; i < 100001; ++i)
+    for (int i = 1; i < _MAX; ++i)
         if (!pp[i])
             pp[i] = i;
 }
 
 int solve(int aa[], int n){
-	map<int, int> mm1;
-	for(int i = 0; i < 100001; i++) cc[i] = 0;
+	for(int i = 0; i < _MAX; i++) cc[i] = 0;
 	int ans = 0;
 	for(int i = 0; i < n; i++){
 		int temp = aa[i];
 		while(temp > 1){
 			int d = pp[temp];
-			//Need to calculate the MAX GCD of the array so far. 	
+			cc[d]++;
 			while(temp%d==0) temp  /= d;
 		}
 	}
@@ -163,7 +164,7 @@ int main(void){BOOST
 		cin >> n;
 		for(int i = 0; i < n; i++) cin >> aa[i];	
 //		sort(aa, aa+n, greater<int>());
-//		cout << solve(aa, n) << endl;
+		cout << solve(aa, n) << endl;
 	}	
 	print_time("Time: ");
 	return 0;
