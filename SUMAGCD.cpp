@@ -34,6 +34,8 @@ typedef unsigned long long ull;
 
 template<typename T>
 static inline T gcd(T a, T b) {
+    if(a == -1) return b;
+    if(b == -1) return a;
     a = std::abs(a);
     b = std::abs(b);
     while (b > 0) {
@@ -122,14 +124,14 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
-const ll _MAX = 500001;
+const int _MAX = 100001, __MAX = 1000000001;
 
-int aa[_MAX], pp[_MAX], cc[_MAX];
+int aa[_MAX], pp[__MAX];
 
 void sieve() {
-    for (int i = 2; i * i <= _MAX; i++) {
+    for (int i = 2; i * i <= __MAX; i++) {
         if (!pp[i])
-            for (int j = i * 2; j <= _MAX; j += i)
+            for (int j = i * 2; j <= __MAX; j += i)
                 pp[j] = i;
     }
     for (int i = 1; i < _MAX; ++i)
@@ -137,18 +139,32 @@ void sieve() {
             pp[i] = i;
 }
 
-int solve(int aa[], int n){
-	for(int i = 0; i < _MAX; i++) cc[i] = 0;
-	int ans = 0;
-	for(int i = 0; i < n; i++){
-		int temp = aa[i];
-		while(temp > 1){
-			int d = pp[temp];
-			cc[d]++;
-			while(temp%d==0) temp  /= d;
-		}
-	}
-	return ans;
+static inline void p_max(pair<int, int> &p, int f, int s){
+	if(s+f > p.F+p.S) p = make_pair(f,s);
+}
+
+pair<int, int> solve(int s, int e){
+	if(e-s == 2) return make_pair(aa[s], aa[s+1]);
+	else if(e-s == 1) return make_pair(aa[s], -1);
+	else if(e-s == 0) return make_pair(-1, -1);
+	else if(e-s < 0) throw "Error occured";
+
+	int m = (e-s)/2;
+	pair<int, int> p1 = solve(s, s+m), p2 = solve(s+m, e), p3 = make_pair(1,1);	
+	int p11 = gcd(p1.F, p1.S), p22 = gcd(p2.F, p2.S); int p12 = gcd(p1.F, p2.F), p21 = gcd(p1.S, p2.S);
+	int p112 = gcd(p1.F, p2.S), p221 = gcd(p1.S, p2.F);
+	if(p1.F != -1) p_max(p3, p1.F, gcd(p1.S, p22));		
+	if(p1.S != -1) p_max(p3, p1.S, gcd(p1.F, p22));
+	if(p2.F != -1) p_max(p3, p2.F, gcd(p2.S, p11));		
+	if(p2.S != -1) p_max(p3, p2.S, gcd(p2.F, p11));		
+	if(p21 != -1 && p12 != -1) p_max(p3, p12, p21);		
+	if(p112 != -1 && p221 != -1) p_max(p3, p112, p221);		
+	return p3;
+}
+
+int solve(int n){
+	pair<int, int> p = solve(0, n);
+	return p.F+p.S; 
 }
 
 int main(void){BOOST
@@ -158,13 +174,11 @@ int main(void){BOOST
 	#endif
 	int t, n, max;
 	cin >> t;
-	sieve();
 	while(t--){
 		max = 0;
 		cin >> n;
 		for(int i = 0; i < n; i++) cin >> aa[i];	
-//		sort(aa, aa+n, greater<int>());
-		cout << solve(aa, n) << endl;
+		cout << solve(n) << endl;
 	}	
 	print_time("Time: ");
 	return 0;
