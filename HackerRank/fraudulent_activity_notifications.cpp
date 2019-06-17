@@ -117,12 +117,30 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
+int solve(double* aa, int n, double d){
+	int ans = 0;
+	double temp;
+	cin >> aa[0];
+	for(int i = 1; i < n; i++){
+		cin >> temp;
+		aa[i] = aa[i-1]+temp;
+		if(i == d && (aa[i-1]/d)*static_cast<double>(2) <= temp) ans++;
+		else if(i > d && ((aa[i-1]-aa[i-(int)d-1])/d)*static_cast<double>(2) <= temp) ans++;
+	}
+	return ans;
+}
+
 int main(void){BOOST
 	init_time();
 	#ifdef LOCAL
 		freopen("input.1", "r", stdin);
 	#endif
-	
+	int n; 
+	double d;
+	double* aa = new double[100001];
+	cin >> n >> d;	
+	cout << solve(aa, n, d) << endl;
+	delete []aa;
 	print_time("Time: ");
 	return 0;
 }
