@@ -119,15 +119,19 @@ inline static T mul(T a, T b, T mod) {
 using namespace std;
 
 ll solve(ll k, ll n){
-	ll ret = (k-1LL) % MOD;
-	ll i = ((k-n)/(n-1LL)) + (((k-n)%(n-1LL) == 0LL) ? 0LL: 1LL);	
-	if(k > n){
-		ll f = -1LL*(n - 1LL);
-		ll s = (i*(i+1LL))/2LL;
-		ll l = i*(k-1LL);
-		ret = (ret + ((f*s) + l) % MOD) % MOD;
-	}
-	return ret % MOD;
+	ll count, num, brac;
+	ll a = k-1;
+	ll d = n-1;
+	if(a%d==0) num = a/d;
+	else num = a/d + 1;
+	d = (-1)*d;
+	if(!(num & 1)){
+		num = num/2;
+		brac = ((2*a)+d*((num*2)-1));
+	}else brac = ((2*a)+d*(num-1))/2;
+	count = (num%MOD)*(brac%MOD);
+	count %= MOD;
+	return count;
 }
 
 int main(void){BOOST
