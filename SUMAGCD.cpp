@@ -126,18 +126,7 @@ using namespace std;
 
 const int _MAX = 100001, __MAX = 1000000001;
 
-int aa[_MAX], pp[__MAX];
-
-void sieve() {
-    for (int i = 2; i * i <= __MAX; i++) {
-        if (!pp[i])
-            for (int j = i * 2; j <= __MAX; j += i)
-                pp[j] = i;
-    }
-    for (int i = 1; i < _MAX; ++i)
-        if (!pp[i])
-            pp[i] = i;
-}
+int aa[_MAX];
 
 static inline void p_max(pair<int, int> &p, int f, int s){
 	if(s+f > p.F+p.S) p = make_pair(f,s);
@@ -162,9 +151,18 @@ pair<int, int> solve(int s, int e){
 	return p3;
 }
 
+//int solve(int n){
+//	pair<int, int> p = solve(0, n);
+//	return p.F+p.S; 
+//}
+
 int solve(int n){
-	pair<int, int> p = solve(0, n);
-	return p.F+p.S; 
+	int high = aa[0];
+	int g = aa[1];
+	for(int i = 2; i < n; i++){
+		if(aa[i] != high) g = gcd(g, aa[i]);
+	}
+	return high + g;
 }
 
 int main(void){BOOST
@@ -178,6 +176,7 @@ int main(void){BOOST
 		max = 0;
 		cin >> n;
 		for(int i = 0; i < n; i++) cin >> aa[i];	
+		sort(aa, aa+n, greater<int>());
 		cout << solve(n) << endl;
 	}	
 	print_time("Time: ");
