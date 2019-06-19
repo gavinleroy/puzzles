@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+#include <iomanip>
+#include <memory>
+
+/*******************************************************
+*           ADVENT OF CODE DAY 18 C++
+*
+*Not the smoothest code, quick to write though though
+*
+
+*******************************************************/
+
+void print(std::vector<std::vector<bool> > grid){
+    for(unsigned int i = 0; i < grid.size(); ++i){
+        for(unsigned int k = 0; k < grid[i].size(); ++k){
+            if(grid[i][k]){
+                std::cout << '.';
+            }else{
+                std::cout << '^';
+            }
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+int doTiles(std::vector<std::vector<bool> >& grid, int start){
+    int returnInt = start;
+    
+    for(unsigned int i = 0; i < grid.size() - 1; ++i){
+        for(unsigned int k = 0; k < grid[i].size(); ++k){
+            
+            if(k == 0){
+                if((!grid[i][k] && !grid[i][k + 1]) || (grid[i][k] && !grid[i][k + 1])){
+                    grid[i + 1].push_back(0);
+                }else{
+                    returnInt++;
+                    grid[i + 1].push_back(1);
+                }
+            }else if(k == grid[i].size() - 1){
+                if((!grid[i][k] && !grid[i][k - 1]) || (grid[i][k] && !grid[i][k - 1])){
+                    grid[i + 1].push_back(0);
+                }else{
+                    returnInt++;
+                    grid[i + 1].push_back(1);
+                }
+            }else{
+                if(((grid[i][k - 1] && !grid[i][k] && !grid[i][k + 1]) ||
+                    (grid[i][k - 1] && grid[i][k] && !grid[i][k + 1]) ||
+                    (!grid[i][k - 1] && grid[i][k] && grid[i][k + 1]) ||
+                    (!grid[i][k - 1] && !grid[i][k] && grid[i][k + 1]))){
+                    
+                    grid[i + 1].push_back(0);
+                }else{
+                    returnInt++;
+                    grid[i + 1].push_back(1);
+                }
+            }
+        }
+    }
+    
+    return returnInt;
+}
+
+
+int main(void){
+    
+    std::ifstream fin("/Users/gavingray/Desktop/input.txt");
+    std::string input;
+    std::getline(fin, input);
+    int safe = 0,
+    length;
+    
+    std::cout << "How many rows are there? ";
+    std::cin >> length;
+    
+    std::vector< std::vector<bool> > floor(length);
+    
+    for(unsigned int i = 0; i < input.length(); ++i){
+        if(input[i] == '.'){
+            safe++;
+            floor[0].push_back(1);
+        }else{
+            floor[0].push_back(0);
+        }
+    }
+    
+    std::cout << "This is how many safe tiles: " << doTiles(floor, safe) << std::endl;
+        
+    fin.close();
+
+    return 0;
+}

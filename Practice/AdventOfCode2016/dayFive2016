@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+#include <iomanip>
+#include "md5.hpp"
+
+/***************
+ *This only reports the answer
+ *for part two of day 5.
+ *my puzzle input was:
+ *     ugkcyxxp
+ ***************/
+
+template< typename T >
+std::string int_to_hex( T i )
+{
+    std::stringstream stream;
+//    stream << "0x"
+    stream << std::hex << i;
+    return stream.str();
+}
+
+//print out the string
+void print(char* array){
+    for(unsigned int i = 0; i < 8; ++i){
+        std::cout << array[i];
+    }
+    
+    std::cout << std::endl;
+}
+
+//create the string with the counter on the back
+std::string getString(std::string front, int back){
+    std::string returnString = "";
+    
+    returnString += front;
+    returnString += std::to_string(back);
+    
+    return returnString;
+}
+
+//Write this program to check the first 5 characters for zero's
+bool checkStats(std::string hex){
+    bool returnBool = true;
+    
+    for(unsigned int i = 0; i < 5; ++i){
+        if(hex[i] != '0'){
+            returnBool = false;
+            break;
+        }
+    }
+    
+    return returnBool;
+}
+
+//fill the array with bogus material
+void fillArray(char* array){
+    for(unsigned int i = 0; i < 8; ++i){
+        array[i] = '-';
+    }
+}
+
+//look to see if the place is valid (0-7)
+bool validPos(char place){
+    if(place <= '7' && place >= '0'){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+//test to see if the space has already been filled
+bool nothingThere(char* array, int pos){
+    if(array[pos] == '-'){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+int main(int argc, char *argv[]){
+//	std::ifstream fin("/Users/gavingray/Desktop/input.txt");
+    
+    char* answer = new char[7];
+    int counter = 0,
+    found = 0;
+    std::string code;
+    
+    fillArray(answer);
+    
+    while(found < 8){
+        code = int_to_hex(md5(getString(argv[1], counter)));
+        //alter this to do part 1.
+        if(checkStats(code)){
+            if(validPos(code[5]) && nothingThere(answer, (code[5] - 48))){
+                answer[code[5] - 48] = code[6];
+                found++;
+            }
+            counter++;
+            
+        }else{
+            counter++;
+        }
+        
+    }
+    
+    std::cout << "The answer is: ";
+    print(answer);
+    delete []answer;
+    
+//	fin.close();
+	return 0;
+}

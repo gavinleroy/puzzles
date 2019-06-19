@@ -1,0 +1,130 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+#include <iomanip>
+#include <memory>
+
+/*************************************************
+ *           ADVENT OF CODE DAY 13 C++
+ *
+ *          My puzzle input is: 1362
+ *
+ * Walls are represented as '#' in the map and spaces
+ * are '.'
+ *
+ * I did part one by running it through an A* algorithmn
+ * which is not posted here because it is not my code.
+ *
+ *
+ ************************************************/
+
+//Change this to alter the size of the floor you are dealing with
+const int SIZE = 50;
+
+
+//This shit doesn't work you need to find what is restricting the function
+int partTwo(char (&map)[SIZE][SIZE], int x, int y, int steps){
+    
+//    std::cout << steps << std::endl;
+    
+    if(map[y][x] == '#' || x >= SIZE || y >= SIZE /*|| steps >= 50*/ || x < 0 || y < 0 || map[y][x] == '+'){
+        return 0;
+        
+    //make sure to enter your number of steps, mine was 50 so I'm not sure why 60 worked... possibly because the recursive calls??
+    }else if(steps == 60){
+        map[y][x] = '+';
+        return 1;
+    }else{
+        map[y][x] = '+';
+        return 1 + partTwo(map, x + 1, y, steps + 1) + partTwo(map, x - 1, y, steps + 1) + partTwo(map, x, y - 1, steps + 1) + partTwo(map, x, y + 1, steps + 1);
+    }
+}
+
+//Prints the map if you want a visual aid
+void printMap(char map[SIZE][SIZE]){
+    int printInt = 0;
+    for(unsigned int i  = 0; i < SIZE; ++i){
+        for(unsigned int k = 0; k < SIZE; ++k){
+            if(k == 31 && i == 39){
+                std::cout << '@';
+            }else if(map[i][k] == '+'){
+                printInt++;
+                std::cout << map[i][k];
+            }else{
+                  std::cout << map[i][k];
+            }
+        }
+        std::cout << std::endl;
+    }
+    
+    //This is here to make sure the number of '+' match the returned int from the recursive partTwo() function
+    std::cout << std::endl << "Number of '+'s: " << printInt << std::endl;
+}
+
+//Counts the number of high bits ('1') in the string which represents a binary number
+int countBits(std::string string){
+    int returnInt = 0;
+    
+    for(int i = 0; i < string.length(); ++i){
+        if(string[i] == '1'){
+            returnInt++;
+        }
+    }
+    
+    return returnInt;
+}
+
+//convert an unsigned int into a string representation of the binary value
+std::string convert(unsigned int val){
+    std::string returnString = "";
+    unsigned int mask = 1 << (sizeof(int) * 8 - 1);
+
+    
+    for(int i = 0; i < sizeof(int) * 8; i++){
+        if( (val & mask) == 0 )
+            returnString += '0';
+        else
+            returnString += '1';
+        
+        mask  >>= 1;
+    }
+    
+    return returnString;
+}
+
+
+int main(int argc, char* argv[]){
+    
+//    std::ifstream fin("/Users/gavingray/Desktop/input.txt");
+    
+    char map[SIZE][SIZE];
+    const int input = 1362;
+    std::string tempS;
+    int temp;
+    
+    
+    for(unsigned int y = 0; y < SIZE; y++){
+        for(unsigned int x = 0; x < SIZE; x++){
+            tempS = convert((x*x) + (3*x) + (2*x*y) + y + (y*y) + input);
+            temp = countBits(tempS);
+            
+            if(temp % 2 == 0){
+                map[y][x] = '.';
+            }else{
+                map[y][x] = '#';
+            }
+        }
+    }
+    
+    std::cout << "Places within 50 steps: " << partTwo(map, 1, 1, 0) << std::endl;
+    
+//    fin.close();
+
+    
+    return 0;
+}

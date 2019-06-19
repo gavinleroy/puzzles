@@ -1,0 +1,201 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+#include <iomanip>
+
+//I know having overloaded funcitons based on the array length is stupid, but I kept getting an error when trying to pass a bool arr[] by reference...
+void rightRotatebyOne(bool (&arr)[6], int n)
+{
+    int i;
+    bool temp = arr[n-1];
+    for (i = n - 1; i > 0; i--)
+        arr[i] = arr[i-1];
+    arr[0] = temp;
+}
+
+void rightRotate(bool (&arr)[6], int d, int n)
+{
+    int i;
+    for (i = 0; i < d; i++)
+        rightRotatebyOne(arr, n);
+}
+
+
+void rightRotatebyOne(bool (&arr)[50], int n)
+{
+    int i;
+    bool temp = arr[n-1];
+    for (i = n - 1; i > 0; i--)
+        arr[i] = arr[i-1];
+    arr[0] = temp;
+}
+
+void rightRotate(bool (&arr)[50], int d, int n)
+{
+    int i;
+    for (i = 0; i < d; i++)
+        rightRotatebyOne(arr, n);
+}
+//End of overloaded rotate array functions
+
+
+int countAll(bool array[6][50]){
+    int returnInt = 0;
+    for(unsigned int i = 0; i < 6; ++i){
+        for(unsigned int k = 0; k < 50; ++k){
+            if(array[i][k]){
+                returnInt++;
+            }
+        }
+    }
+    
+    return returnInt;
+}
+
+int getNum(std::string code){
+    int returnInt = 0,
+    x = 0;
+        for(unsigned int i = 0; i < code.length(); ++i){
+            if(isnumber(code[i])){
+                for(unsigned int k = 0; k < x; ++k){
+                    returnInt *= 10;
+                }
+                x++;
+                returnInt += static_cast<int>(code[i] - 48);
+            }
+        }
+    return returnInt;
+}
+
+void rotateByColumn(bool (&screen)[6][50], std::vector<std::string> code){
+    int index = getNum(code[2]),
+    byHowMany = stoi(code[4]);
+    
+    
+    bool tempArray[6];
+    
+    for(unsigned int i = 0; i < 6; ++i){
+        tempArray[i] = screen[i][index];
+    }
+    
+    rightRotate(tempArray, byHowMany, 6);
+    
+    for(unsigned int i = 0; i < 6; ++i){
+        screen[i][index] = tempArray[i];
+    }
+}
+
+void rotateByRow(bool (&screen)[6][50], std::vector<std::string> code){
+    
+    int index = getNum(code[2]),
+    byHowMany = stoi(code[4]);
+    
+    bool tempArray[50];
+    
+    for(unsigned int i = 0; i < 50; ++i){
+        tempArray[i] = screen[index][i];
+    }
+    
+    rightRotate(tempArray, byHowMany, 50);
+    
+    for(unsigned int i = 0; i < 50; ++i){
+        screen[index][i] = tempArray[i];
+    }
+}
+
+void readFiveInp(bool (&screen)[6][50], std::vector<std::string> code){
+    
+    if(code[1] == "row"){
+        rotateByRow(screen, code);
+    }else{
+        rotateByColumn(screen, code);
+    }
+}
+
+void createRect(bool (&array)[6][50], int x, int y){
+    for(unsigned int i = 0; i < y; ++i){
+        for(unsigned int k = 0; k < x; ++k){
+            array[i][k] = true;
+        }
+    }
+}
+
+void printArray(bool array[6][50]){
+    for(unsigned int i = 0; i < 6; ++i){
+        for(unsigned int k = 0; k < 50; ++k){
+            if(array[i][k]){
+                std::cout << '#';
+            }else{
+                std::cout << ' ';
+            }
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+void initArray(bool (&array)[6][50]){
+    for(unsigned int i = 0; i < 6; ++i){
+        for(unsigned int k = 0; k < 50; ++k){
+            array[i][k] = false;
+        }
+    }
+}
+
+void readRectInp(bool (&screen)[6][50], std::string inp){
+    std::istringstream sin(inp);
+    std::string num;
+    std::vector<std::string> coord;
+    
+    while(std::getline(sin, num, 'x')){
+        coord.push_back(num);
+    }
+//    std::cout << stoi(coord[0]) << " " << stoi(coord[1]) << std::endl;
+    createRect(screen, stoi(coord[0]), stoi(coord[1]));
+    
+}
+
+int main(void){
+    
+    std::ifstream fin("/Users/gavingray/Desktop/input.txt");
+    bool screen[6][50];
+    std::string command;
+    initArray(screen);
+    
+    while(std::getline(fin, command)){
+        
+        std::istringstream sin(command);
+        std::string part;
+        std::vector<std::string> broken;
+        
+        while(std::getline(sin, part, ' ')){
+            broken.push_back(part);
+        }
+        
+        switch(broken.size()){
+            case 2:
+                readRectInp(screen, broken[1]);
+                break;
+            case 5:
+                readFiveInp(screen, broken);
+                break;
+            default:
+                std::cout << "You got some screwed up input" << std::endl;
+                break;
+        }
+        
+    }
+    
+    printArray(screen);
+
+    std::cout << "\nThe total amount of pixels on: " << countAll(screen) << std::endl;
+    
+    fin.close();
+   
+    return 0;
+}

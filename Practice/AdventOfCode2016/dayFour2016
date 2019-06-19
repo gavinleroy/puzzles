@@ -1,0 +1,197 @@
+//Works for part one and part two:
+//for part two you have to search the strings for what is asked
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+
+
+class character{
+public:
+    
+    character(int index) :
+        m_times(0),
+        m_identity(static_cast<char>(index + 97))
+    {}
+    
+    char getIdentity(){
+        return m_identity;
+    }
+    
+    int getTimes(){
+        return m_times;
+    }
+    
+    void addTime(){
+        m_times++;
+    }
+    
+private:
+    
+    int m_times;
+    char m_identity;
+};
+
+//Fairly standard bubble sort
+void sortThisIsh(std::vector<character*>& bet){
+    
+    bool swapped = false;
+    
+    do{
+        swapped = false;
+        for (unsigned int i = 0; i < bet.size() - 1; i++){
+            if (bet[i]->getTimes() < bet[i + 1]->getTimes()){
+                std::swap(bet[i], bet[i + 1]);
+                swapped = true;
+            }
+        }
+        
+    }while(swapped);
+
+}
+
+//put the alphabet into the vector
+void fillVector(std::vector<character*>& bet){
+    for(unsigned int g = 0; g < 26; ++g){
+        bet.push_back(new character(g));
+    }
+}
+
+//clean up the dynamically allocated memory
+void deleteVar(std::vector<character*>& bet){
+    for(unsigned int i = 0; i < bet.size(); ++i){
+        delete bet[i];
+    }
+}
+
+//delete everything but the numbers
+int getNumber(std::string stringCrap){
+    //delete the characters
+    for(unsigned int i = 0; i < stringCrap.size(); ++i){
+        if(!isdigit(stringCrap[i])){
+            stringCrap.erase(stringCrap.begin() + i);
+            i--;
+        }
+    }
+    return stoi(stringCrap);
+}
+
+//delete everything but the most frequent letters
+std::string getTop(std::string stringCrap){
+    //delete the numbers
+    for(unsigned int i = 0; i < stringCrap.size(); ++i){
+        if(isdigit(stringCrap[i]) || stringCrap[i] == '[' || stringCrap[i] == ']'){
+            stringCrap.erase(stringCrap.begin() + i);
+            i--;
+        }
+    }
+    return stringCrap;
+}
+
+//get the actual most frequent letters
+std::string getActualCode(std::vector<character*> bet){
+    std::string returnString = "";
+    
+    for(unsigned int i = 0; i < 5; ++i){
+        returnString += bet[i]->getIdentity();
+    }
+    
+    return returnString;
+}
+
+//return whether the data is bogus or not
+bool findDecoys(std::string roomCode, int& rotNumb, int& totalNum){
+    
+    //declare all locally scoped variables
+    bool returnBool = false;
+    std::istringstream holla(roomCode);
+    std::vector<std::string> segmentedString;
+    std::string segment;
+    std::vector<character*> alphabet;
+    std::string topFive;
+    
+    //fill the vector with the alphabet
+    fillVector(alphabet);
+    
+    //turn the input into a vector of segmented strings
+    while(std::getline(holla, segment, '-')){
+        segmentedString.push_back(segment);
+    }
+    
+    //for each character increase the count of it happeneing;
+    for(unsigned int i = 0; i < segmentedString.size() - 1; ++i){
+        for(unsigned int k = 0; k < segmentedString[i].size(); ++k){
+            
+            if(segmentedString[i][k] >= 'a' && segmentedString[i][k] <= 'z'){
+                alphabet[segmentedString[i][k] - 97]->addTime();
+            }
+        }
+    }//end double for loop
+    
+    //Sort based on amount of times
+    sortThisIsh(alphabet);
+    
+//    for(unsigned int i = 0; i < alphabet.size(); ++i){
+//        std::cout << "character: " << alphabet[i]->getIdentity() << ", number of times: " << alphabet[i]->getTimes() << std::endl;
+//    }
+    
+    //get the code of the input
+    roomCode = getTop(segmentedString[segmentedString.size() - 1]);
+    
+    //get the sorted value code
+    //check to see if the actual is equal to the input
+    //if they are equal then incrament by the number.
+    
+    
+    if(roomCode == getActualCode(alphabet)){
+        rotNumb = getNumber(segmentedString[segmentedString.size() - 1]);
+        totalNum += getNumber(segmentedString[segmentedString.size() - 1]);
+
+        returnBool = true;
+    }
+    
+    //delete dynamically allocated memory
+    deleteVar(alphabet);
+    
+    return returnBool;
+}
+
+
+std::string decodeMessage(std::string name, int rotate){
+    for(unsigned int i = 0; i < name.length(); ++i){
+        if(name[i] == '-'){
+            name[i] = ' ';
+        }else if(isdigit(name[i])){
+            break;
+        }else{
+            name[i] = (((name[i] - 97) + rotate) % 26) + 97;
+        }
+    }
+    return name;
+}
+
+
+int main(void){
+	std::ifstream fin("/Users/gavingray/Desktop/input.txt");
+
+    std::string roomCode = "";
+    std::string decodedMessage = "";
+    int rotNumb = 0;
+    int totalNum = 0;
+    
+    //get each line of the input...
+    while(getline(fin, roomCode)){
+        if(findDecoys(roomCode, rotNumb, totalNum)){
+            decodedMessage = decodeMessage(roomCode, rotNumb);
+            std::cout << "Your decoded message: " << decodedMessage << std::endl;
+        }
+    }//end while loop
+    
+    std::cout << std::endl << "Answer to the first part of day 4: " << totalNum << std::endl;
+    
+	fin.close();
+	return 0;
+}

@@ -1,0 +1,372 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+#include <iomanip>
+#include <memory>
+
+/*************************************************
+ *           ADVENT OF CODE DAY 10
+ *
+ *This code is super sloppy and barely readable
+ *so if you're reading this I apologize.
+ *
+ *The main idea is to fill a vector with the string
+ *instructions and call a recursive function to act on the
+ *vector of commands while the size > 0;
+ *When theh size of the instructions vector reaches zero
+ *function returns
+ *
+ *Definitely not the best approach but I wanted to brush
+ *up on recursive function and I just ran with it.
+ *
+ *I created a lot of function in this program and that
+ *is why is is very hard to follow.
+ ************************************************/
+
+//Bot class with the functions I wanted to complete day 10, 2016
+class Bot{
+    
+public:
+    
+    Bot(int identifier):
+        secondNum(nullptr),
+        firstNum(nullptr),
+        ID(identifier)
+    {}
+    
+    int getID(){
+        return ID;
+    }
+    
+    bool canGive(){
+        
+        if(firstNum != nullptr && secondNum != nullptr){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    
+    void print(){
+        if(firstNum != nullptr)
+            std::cout << "The first num is: " << *firstNum << std::endl;
+        else if(secondNum != nullptr)
+            std::cout << "The second num is: " << *secondNum << std::endl;
+        else if(firstNum == nullptr && secondNum == nullptr)
+            std::cout << "This bot has nothing" << std::endl;
+    }
+    
+    int getLow(){
+        
+        if(*firstNum < *secondNum){
+            return *firstNum;
+        }else{
+            return *secondNum;
+        }
+            
+    }
+    
+    int getHigh(){
+        
+        if(*firstNum < *secondNum){
+            return *secondNum;
+        }else{
+            return *firstNum;
+        }
+    }
+    
+    bool recieveNum(int recieving){
+        if(firstNum != nullptr && secondNum != nullptr){
+            std::cout << "Could not recieve number" << std::endl;
+            return false;
+        }else if(secondNum == nullptr){
+            secondNum = std::make_shared<int>(recieving);
+        }else{
+            firstNum = std::make_shared<int>(recieving);
+        }
+        return true;
+    }
+    
+    void setFirst(){
+        firstNum = nullptr;
+    }
+    
+    void setSecond(){
+        secondNum = nullptr;
+    }
+    
+private:
+    
+    std::shared_ptr<int> secondNum;
+    std::shared_ptr<int> firstNum;
+    int ID;
+    
+};
+
+//Output class with the functions I wanted to complete day 10, 2016
+class output{
+    
+public:
+    
+    output(int identity):
+        ID(identity)
+    {}
+    
+    int getID(){
+        return ID;
+    }
+    
+    void addNum(int num){
+        numbers.push_back(num);
+    }
+    
+    int howManyInBin(){
+        return numbers.size();
+    }
+    
+    void print(){
+        for(unsigned int i = 0; i < numbers.size(); ++i){
+            std::cout << numbers[i] << ", ";
+        }
+        std::cout << std::endl;
+    }
+    
+    int getFirstNumInBin(){
+        return numbers[0];
+    }
+    
+private:
+    int ID;
+    std::vector<int> numbers;
+};
+
+
+
+//print out a vector
+void print(std::vector<std::string> instructions){
+    for(unsigned int i = 0; i < instructions.size(); ++i){
+        std::cout << instructions[i] << " ";
+    }
+    std::cout << std::endl;
+}
+
+//return the index of the bot
+int findBot(std::vector<Bot*>& bots, int botNum){
+    int returnInt = -1;
+    
+    for(unsigned int i = 0; i < bots.size(); ++i){
+        if(bots[i]->getID() == botNum){
+            returnInt = i;
+            break;
+        }
+    }
+    
+    if(returnInt == -1){
+        bots.push_back(new Bot(botNum));
+        returnInt = bots.size() - 1;
+    }
+    
+    return returnInt;
+}
+
+//fill the instructions vector
+void fillInstructions(std::vector<std::string>& instructions){
+    
+    std::ifstream fin("/Users/gavingray/Desktop/input.txt");
+
+    std::string temp;
+    
+    while(std::getline(fin, temp)){
+        instructions.push_back(temp);
+    }
+    
+    fin.close();
+   
+}
+
+//break the input into a vector and return the vector
+std::vector<std::string> breakInput(std::string string){
+    std::vector<std::string> returnStrings;
+    std::string temp;
+    
+    std::istringstream sin(string);
+    
+    while(std::getline(sin, temp, ' ')){
+        returnStrings.push_back(temp);
+    }
+
+    return returnStrings;
+}
+
+//Give a value to a bot
+void giveNumberToBot(int botNumber, int chipVal, std::vector<Bot*>& bots){
+    
+    bool foundBot = false;
+    
+    
+    unsigned int i;
+    for(i = 0; i < bots.size(); ++i){
+        if(bots[i]->getID() == botNumber){
+            foundBot = true;
+            break;
+        }
+    }
+    
+    if(foundBot){
+        bots[i]->recieveNum(chipVal);
+    }else{
+        bots.push_back(new Bot(botNumber));
+        bots[bots.size() - 1]->recieveNum(chipVal);
+    }
+    
+}
+
+//Give a number to an output bin, if there isn't already a bin create a new one
+void giveOutputNum(int numToGive, int outputNum, std::vector<output*>& outputs){
+    
+    bool found = false;
+    
+    unsigned int i;
+    for(i = 0; i < outputs.size(); ++i){
+        if(outputs[i]->getID() == outputNum){
+            found = true;
+            break;
+        }
+    }
+    
+    if(found){
+        outputs[i]->addNum(numToGive);
+    }else{
+        outputs.push_back(new output(outputNum));
+        outputs[outputs.size() - 1]->addNum(numToGive);
+    }
+}
+
+//Give a value to another robot if the current robot has two values
+bool giveValueToOther(std::vector<std::string> command, std::vector<Bot*>& bots, std::vector<output*>& outputs){
+    
+    bool returnBool = false;
+    
+    int givingBot = std::stoi(command[1]);
+    
+    if(!bots[findBot(bots, givingBot)]->canGive()){
+        return false;
+    }else{
+        returnBool = true;
+    }
+    
+    int botIndex = findBot(bots, givingBot);
+    int lowInt = bots[botIndex]->getLow(),
+    highInt = bots[botIndex]->getHigh();
+    
+    if(lowInt == 17 && highInt == 61){
+        std::cout << "bot number: " << bots[botIndex]->getID() << " is responsible for comparings " << lowInt << " and " << highInt << std::endl;
+    }
+    
+    if(command[5] == "output"){
+        giveOutputNum(lowInt, std::stoi(command[6]), outputs);
+    }else{
+        bots[findBot(bots, std::stoi(command[6]))]->recieveNum(lowInt);
+    }
+    
+    if(command[10] == "output"){
+        giveOutputNum(highInt, std::stoi(command[11]), outputs);
+
+    }else{
+        bots[findBot(bots, std::stoi(command[11]))]->recieveNum(highInt);
+
+    }
+    
+    bots[botIndex]->setFirst();
+    bots[botIndex]->setSecond();
+    
+    return returnBool;
+}
+
+bool actOnInput(std::vector<std::string> command, std::vector<Bot*>& bots, std::vector<output*>& outputs){
+    
+    bool returnBool = false;
+    
+    if(command[0] == "bot"){
+        
+        returnBool = giveValueToOther(command, bots, outputs);
+        
+        
+    }else if(command[0] == "value"){
+        giveNumberToBot(std::stoi(command[5]), std::stoi(command[1]), bots);
+        
+        return true;
+        
+    }else{
+        std::cout << "Some stupid shit happened" << std::endl;
+    }
+    
+    return returnBool;
+    
+}
+
+//take different actions based on what the string says to do
+bool readInput(std::string string, std::vector<Bot*>& bots, std::vector<output*>& outputs){
+
+    std::vector<std::string> broken = breakInput(string);
+    
+    return actOnInput(broken, bots, outputs);
+
+
+}
+
+//Recursive function that acts on each input until the instructions vector is empty
+int figureThisOut(std::vector<Bot*>& bots, std::vector<output*>& outputs, std::vector<std::string> instructions){
+
+    bool didWork = false;
+    int x = 0;
+    
+    if(instructions.size() == 0){
+        return 0;
+    }
+    
+    while(!didWork){
+        
+        if(readInput(instructions[x], bots, outputs)){
+            didWork = true;
+        }
+        
+        x++;
+    }
+    
+    instructions.erase(instructions.begin() + x - 1);
+    
+    return figureThisOut(bots, outputs, instructions);
+    
+}
+
+
+int main(void){
+    std::vector<std::string> instructions;
+    int partTwo = 1;
+    fillInstructions(instructions);
+    std::vector<Bot*> botArray;
+    std::vector<output*> binArray;
+    
+    figureThisOut(botArray, binArray, instructions);
+    
+    for(unsigned int i = 0; i < botArray.size(); ++i){
+        delete botArray[i];
+    }
+    
+    for(unsigned int i = 0; i < binArray.size(); ++i){
+        if(binArray[i]->getID() == 0 || binArray[i]->getID() == 1 || binArray[i]->getID() == 2){
+            partTwo *= binArray[i]->getFirstNumInBin();
+        }
+        delete binArray[i];
+    }
+    
+    std::cout << "The answer for part two: " << partTwo << std::endl;
+    
+    return 0;
+}

@@ -1,0 +1,222 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+#include <iomanip>
+
+/*************************************************
+ ADVENT OF CODE DAY 9 C++
+ 
+ *The thought process for part two is to create a 
+ *parallel array to the string and give each letter 
+ *a coorespodning number for how many
+ *times it has occured.  When the markers are hit 
+ *i.e. '(25x3)' the array is run through and the 
+ *next 25 indexes would be multiplied by 3.
+ *
+ *If a letter is the character in the string the 
+ *cooresponding occurences is added to the total 
+ *length of the expanded string
+ *
+ *
+ *
+ *There is a recursive function that I wanted to 
+ *write, it is extremely impractical for this 
+ *situation and will
+ *not work because it uses way too much memory.
+ *
+ * f.y.i. This is a very rough solution
+ *
+ ************************************************/
+
+//The SIZE of the input text to use later, I despise using global variables and I believe that you shouldn't make anything global for security reasons,
+//but it is a constant variable so I justified it (I still am kicking myself for using this)
+const int SIZE = 10586;
+
+void print(unsigned long array[SIZE]){
+    
+    for(unsigned int i = 0; i < SIZE; ++i){
+        std::cout << array[i] << ", ";
+    }
+    std::cout << std::endl;
+}
+
+
+//Use the data and extend the string using the information format (1x1)
+std::string extendString(std::string original, std::string before, int index, int array[2]){
+    std::string returnString = before;
+    
+    std::string addString = "";
+    
+    for(unsigned int i = 0; i < array[0]; ++i){
+        if(original[index + i] != ' '){
+            addString += original[index + i];
+        }
+    }
+    
+
+    for(unsigned int k = 0; k < array[1]; ++k){
+        returnString += addString;
+    }
+    
+    return returnString;
+}
+
+//Get the data that will be used to extend the string
+int getAmount(std::string string, int& secondInt){
+    int returnInt;
+    std::string intermediate;
+    std::istringstream sin(string);
+    
+    std::getline(sin, intermediate, 'x');
+    returnInt = stoi(intermediate);
+    std::getline(sin, intermediate);
+    secondInt = stoi(intermediate);
+    sin.clear();
+    
+    return returnInt;
+    
+}
+
+//Funtion for part One
+int partOne(std::string line){
+    
+    std::string totalString;
+    
+    for(unsigned int i = 0; i < line.length(); ++i){
+        if(line[i] == '('){
+            int times[2];
+            std::string piece;
+        
+            int x = i + 1;
+            while(line[x] != ')'){
+                piece += line[x];
+                x++;
+            }
+            times[0] = getAmount(piece, times[1]);
+            totalString = extendString(line, totalString, x + 1, times);
+            i = x + times[0];
+        }else{
+            totalString += line[i];
+        }
+    
+    }
+    return totalString.length();
+}
+
+void initializeArray(unsigned long (&array)[SIZE]){
+    for(unsigned int i = 0; i < SIZE; ++i){
+        array[i] = 1;
+    }
+}
+
+//multiply the number for the given indexes by the multiplier in the marker
+void increaseWeight(int times[2], unsigned long (&array)[SIZE], int index, std::string line){
+    for(unsigned int i = 0; i < times[0]; ++i){
+        array[i + index] *= static_cast<unsigned long>(times[1]);
+    }
+    
+//    print(array);
+}
+
+//run through the string and increase the multipliers in the parallel array
+unsigned long countWeights(std::string line, unsigned long (&array)[SIZE]){
+    
+    unsigned long length = 0;
+    
+    for(unsigned int i = 0; i < SIZE; ++i){
+        
+        if(line[i] == '('){
+            int times[2];
+            std::string piece;
+            int x = i + 1;
+            
+            while(line[x] != ')'){
+                piece += line[x];
+                x++;
+            }
+        
+            times[0] = getAmount(piece, times[1]);
+            increaseWeight(times, array, x + 1, line);
+            i = x;
+     
+        }else if(line[i] >= 'A' || line[i] <= 'Z'){
+            length += array[i];
+        }else{
+            std::cout << "\n\n\n\nSomething bad happened\n\n\n\n";
+        }
+     }
+    
+    return length;
+}
+
+//overhead function for part two
+unsigned long expandPartTwo(std::string string){
+    
+    unsigned long array[SIZE];
+    
+    initializeArray(array);
+    return countWeights(string, array);
+
+}
+
+////TotalFunction for part two
+////This is solved using recursion, it is an extremely impractical way of solving the solution seeing as you need a ton of memory and it would take FOREVER...
+std::string recursionPartTwo(std::string string){
+    
+    std::string returnString;
+    std::string totalString;
+    bool goAgain = false;
+    
+    for(unsigned int i = 0; i < string.length(); ++i){
+        if(string[i] == '('){
+            goAgain = true;
+            int times[2];
+            std::string piece;
+            int x = i + 1;
+            while(string[x] != ')'){
+                piece += string[x];
+                x++;
+            }
+            times[0] = getAmount(piece, times[1]);
+            totalString = extendString(string, totalString, x + 1, times);
+            i = x + times[0];
+        }else if (string[i] != '(' && string[i] != ')'){
+            totalString += string[i];
+        }
+    }
+    if(goAgain){
+        return returnString += recursionPartTwo(totalString);
+    }else{
+        return totalString;
+    }
+}
+
+int main(void){
+    
+    std::ifstream fin("/Users/gavingray/Desktop/input.txt");
+    
+    unsigned long returnInt = 0,
+    secondReturnInt = 0;
+    std::string secondTotalString;
+    std::string line;
+    
+    while(std::getline(fin, line)){
+        std::cout << "The size of the input is: " << line.length() << std::endl;
+        
+        secondReturnInt += expandPartTwo(line);
+        returnInt = partOne(line);
+        
+    }
+    fin.close();
+    
+    std::cout << "\n\nThe total decompressed length for part 1: " << returnInt << std::endl << std::endl;
+    std::cout << "The total decompressed length for part 2: " << secondReturnInt << std::endl << std::endl;
+
+    
+    return 0;
+}

@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+#include <iomanip>
+#include <memory>
+
+/*******************************************************
+*           ADVENT OF CODE DAY 16 C++
+*
+*Hard coding is never the "best" or most elegant but
+*I am in a time pinch and hey it worked.
+*
+*When I re-write this code I will use the 
+*Chinese remainder theorem to calculate
+*the answer.
+*
+*
+*
+*
+*******************************************************/
+bool one(int time){ return (time + 2) % 5 == 0; }
+bool two(int time){ return (time + 7) % 13 == 0; }
+bool three(int time){ return (time + 10) % 17 == 0; }
+bool four(int time){ return (time + 2) % 3 == 0; }
+bool five(int time){ return (time + 9) % 19 == 0; }
+bool six(int time){ return (time + 0) % 7 == 0; }
+bool seven(int time){ return (time + 0) % 11 == 0; }
+
+bool checkTime(int t, bool partTwo){
+    if(partTwo == true && one(t + 1) && two(t + 2) && three(t + 3) && four(t + 4) && five(t + 5) && six(t + 6) && seven(t + 7)){
+        return true;
+    }else if(partTwo == false && one(t + 1) && two(t + 2) && three(t + 3) && four(t + 4) && five(t + 5) && six(t + 6)){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+int main(int argc, char* argv[]){
+    
+//    std::ifstream fin("/Users/gavingray/Desktop/input.txt");
+    
+    bool areYouDone = false;
+    unsigned int time = -1;
+    
+    while(areYouDone == false){
+        time++;
+        areYouDone = checkTime(time, false);
+    }
+    
+    std::cout << "The amount of seconds it took for part one:  " << time << std::endl;
+    
+    time = -1;
+    areYouDone = false;
+    
+    while(areYouDone == false){
+        time++;
+        areYouDone = checkTime(time, true);
+    }
+    
+    std::cout << "The amount of seconds it took for part two:  " << time << std::endl;
+
+//    fin.close();
+
+    
+    return 0;
+}
