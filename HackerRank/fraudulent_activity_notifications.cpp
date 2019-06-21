@@ -117,15 +117,37 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
-int solve(double* aa, int n, double d){
+double cal_med(int* cc, int d){
+	if(!(d&1)) return (double)(((double)cc[d/2 - 1] + (double)cc[d/2])/2.0);
+	else return cc[d/2]; 
+}
+
+void build_c(int* ff, int* cc, int d){
+	int i = 0;
+	for(int j = 0; j < 201 && i < d; j++){
+		int temp = ff[j];
+		while(temp--) cc[i++] = j;
+	}
+}
+
+int solve(int* aa, int* ff, int n, int d){
+	for(int i = 0; i < 201; i++) ff[i] = 0;
+	for(int i = 0; i < d; i++){
+		cin >> aa[i];
+		ff[aa[i]]++;
+	}
+	int* cc = new int[d];
+	build_c(ff, cc, d);
 	int ans = 0;
-	double temp;
-	cin >> aa[0];
-	for(int i = 1; i < n; i++){
-		cin >> temp;
-		aa[i] = aa[i-1]+temp;
-		if(i == d && (aa[i-1]/d)*static_cast<double>(2) <= temp) ans++;
-		else if(i > d && ((aa[i-1]-aa[i-(int)d-1])/d)*static_cast<double>(2) <= temp) ans++;
+	double med;
+	for(int i = d; i < n; i++){
+		med = cal_med(cc, d);
+		cin >> aa[i];
+//		cout << "med: " << med << " aa[i] " << aa[i] << endl;
+		if(2.0*med <= aa[i]) ans++;
+		ff[aa[i]]++;
+		ff[aa[i-d]]--;
+		if(aa[i] != aa[i-d]) build_c(ff,cc, d);
 	}
 	return ans;
 }
@@ -136,11 +158,13 @@ int main(void){BOOST
 		freopen("input.1", "r", stdin);
 	#endif
 	int n; 
-	double d;
-	double* aa = new double[100001];
+	int d;
+	int* aa = new int[200001];
+	int* ff = new int[201];
 	cin >> n >> d;	
-	cout << solve(aa, n, d) << endl;
+	cout << solve(aa, ff, n, d) << endl;
 	delete []aa;
+	delete []ff;
 	print_time("Time: ");
 	return 0;
 }
