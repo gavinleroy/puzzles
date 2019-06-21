@@ -125,6 +125,7 @@ double cal_med(int* cc, int d){
 void build_c(int* ff, int* cc, int d){
 	int i = 0;
 	for(int j = 0; j < 201 && i < d; j++){
+		if(ff[j] <= 0) continue;
 		int temp = ff[j];
 		while(temp--) cc[i++] = j;
 	}
@@ -139,16 +140,17 @@ int solve(int* aa, int* ff, int n, int d){
 	int* cc = new int[d];
 	build_c(ff, cc, d);
 	int ans = 0;
-	double med;
+	double med = cal_med(cc,d);
 	for(int i = d; i < n; i++){
-		med = cal_med(cc, d);
 		cin >> aa[i];
-//		cout << "med: " << med << " aa[i] " << aa[i] << endl;
 		if(2.0*med <= aa[i]) ans++;
 		ff[aa[i]]++;
 		ff[aa[i-d]]--;
-		if(aa[i] != aa[i-d]) build_c(ff,cc, d);
+		if((aa[i] > med && aa[i-d] > med) || (aa[i] < med && aa[i-d] < med)) continue;
+		build_c(ff,cc, d);
+		med = cal_med(cc, d);
 	}
+	delete []cc;
 	return ans;
 }
 
