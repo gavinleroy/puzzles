@@ -1,4 +1,5 @@
 a.out
+output.*
 input.*
 *.txt
 *.swp
