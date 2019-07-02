@@ -124,45 +124,16 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
-const int _MAX = 100001, __MAX = 1000000001;
-
-int aa[_MAX];
-
-static inline void p_max(pair<int, int> &p, int f, int s){
-	if(s+f > p.F+p.S) p = make_pair(f,s);
-}
-
-pair<int, int> solve(int s, int e){
-	if(e-s == 2) return make_pair(aa[s], aa[s+1]);
-	else if(e-s == 1) return make_pair(aa[s], -1);
-	else if(e-s == 0) return make_pair(-1, -1);
-	else if(e-s < 0) throw "Error occured";
-
-	int m = (e-s)/2;
-	pair<int, int> p1 = solve(s, s+m), p2 = solve(s+m, e), p3 = make_pair(1,1);	
-	int p11 = gcd(p1.F, p1.S), p22 = gcd(p2.F, p2.S); int p12 = gcd(p1.F, p2.F), p21 = gcd(p1.S, p2.S);
-	int p112 = gcd(p1.F, p2.S), p221 = gcd(p1.S, p2.F);
-	if(p1.F != -1) p_max(p3, p1.F, gcd(p1.S, p22));		
-	if(p1.S != -1) p_max(p3, p1.S, gcd(p1.F, p22));
-	if(p2.F != -1) p_max(p3, p2.F, gcd(p2.S, p11));		
-	if(p2.S != -1) p_max(p3, p2.S, gcd(p2.F, p11));		
-	if(p21 != -1 && p12 != -1) p_max(p3, p12, p21);		
-	if(p112 != -1 && p221 != -1) p_max(p3, p112, p221);		
-	return p3;
-}
-
-//int solve(int n){
-//	pair<int, int> p = solve(0, n);
-//	return p.F+p.S; 
-//}
-
-int solve(int n){
-	int high = aa[0];
-	int g = aa[1];
-	for(int i = 2; i < n; i++){
-		if(aa[i] != high) g = gcd(g, aa[i]);
-	}
-	return high + g;
+int solve(vector<int> vv, int n){
+	int pp[n], ss[n];
+	pp[0] = vv[0];
+	ss[n-1] = vv[n-1];
+	for(int i = 1; i < n; i++) pp[i] = gcd(vv[i], pp[i-1]);
+	for(int i = n-2; i >= 0; i--) ss[i] = gcd(vv[i], ss[i+1]);
+	int ans = pp[0] + ss[1];
+	for(int i = 1; i < n-1; i++) remax(ans, vv[i] + gcd(ss[i+1], pp[i-1]));
+	remax(ans, ss[n-2] + vv[n-1]);
+	return ans;
 }
 
 int main(void){BOOST
@@ -173,11 +144,18 @@ int main(void){BOOST
 	int t, n, max;
 	cin >> t;
 	while(t--){
-		max = 0;
 		cin >> n;
-		for(int i = 0; i < n; i++) cin >> aa[i];	
-		sort(aa, aa+n, greater<int>());
-		cout << solve(n) << endl;
+		set<int> ss;
+		vector<int> aa;
+		for(int i = 0; i < n; i++){
+			int temp;
+		       	cin >> temp;
+			auto p = ss.insert(temp);
+			if(p.S){
+				aa.push_back(temp);
+			}
+		}
+		cout << solve(aa, aa.size()) << endl;
 	}	
 	print_time("Time: ");
 	return 0;
