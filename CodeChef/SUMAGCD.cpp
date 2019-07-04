@@ -124,15 +124,17 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
+int pp[100001], ss[100001];
+
 int solve(vector<int> vv, int n){
-	int pp[n], ss[n];
+	if(n==1) return vv[0] * 2;
+
 	pp[0] = vv[0];
 	ss[n-1] = vv[n-1];
-	for(int i = 1; i < n; i++) pp[i] = gcd(vv[i], pp[i-1]);
-	for(int i = n-2; i >= 0; i--) ss[i] = gcd(vv[i], ss[i+1]);
-	int ans = pp[0] + ss[1];
-	for(int i = 1; i < n-1; i++) remax(ans, vv[i] + gcd(ss[i+1], pp[i-1]));
-	remax(ans, ss[n-2] + vv[n-1]);
+	for(int i = 1; i < n; i++) pp[i] = gcd(pp[i-1], vv[i]);
+	for(int i = n-2; i >= 0; i--) ss[i] = gcd(ss[i+1], vv[i]);
+	int ans = max(vv[0] + ss[1], pp[n-2] + vv[n-1]);
+	for(int i = 1; i < n-1; i++) remax(ans, vv[i] + gcd(pp[i-1], ss[i+1]));
 	return ans;
 }
 
@@ -150,8 +152,7 @@ int main(void){BOOST
 		for(int i = 0; i < n; i++){
 			int temp;
 		       	cin >> temp;
-			auto p = ss.insert(temp);
-			if(p.S){
+			if(ss.insert(temp).S){
 				aa.push_back(temp);
 			}
 		}
