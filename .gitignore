@@ -1,3 +1,10 @@
+<<<<<<< HEAD
 input.*
 a.out
+=======
+a.out
+output.*
+input.*
+*.txt
+>>>>>>> JuneCircuits/master
 *.swp
