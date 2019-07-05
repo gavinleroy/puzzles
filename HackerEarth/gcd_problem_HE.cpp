@@ -32,9 +32,6 @@
 #define ull uint64_t
 #define MOD (int)(1e9+7)
 
-//typedef long long ll;
-//typedef unsigned long long ull;
-
 template<typename T>
 static inline T gcd(T a, T b) {
     a = std::abs(a);
@@ -120,41 +117,36 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
-ll phi[100001], aa[100001];
+int fac[100001], dp[260001];
 
-void cTot(int n) {
-	for (int i=1; i<=n; i++) phi[i] = i; 
-	for (int p=2; p<=n; p++) {
-		if (phi[p] == p) {
-			phi[p] = p-1;
-			for (int i = 2*p; i<=n; i += p) {
-				phi[i] = (phi[i]/p) * (p-1);
-			}
-		}
-	}
-} 
-
-void cSum(int n){
-	cTot(n);
-	for(int i = 1; i <= n; i++){
-		for(int j = 2; i*j <= n; j++){
-			aa[i*j] = i*phi[j];
-		}
-	}
-	for(int i = 2; i <= n; i++){ aa[i] += aa[i-1]; cout << aa[i] << endl; }
+int modInverse(int n) {
+    return pw(n, MOD-2, MOD);
 }
 
-int solve(int n){
-	int sum = 0;
-	for(int i = 1; i <= n; i++){
-		for(int j = i+1; j <= n; j++){
-			for(int k = j+1; k <= n; k++){
-				sum += gcd(k, gcd(i, j));
-			}
+void fill_fac(){
+	fac[0] = 1;
+	for(int i=1 ; i<=100001; i++) fac[i] = fac[i-1]*i%MOD;
+}
+
+int ch(int n, int r){
+   if (r==0) return 1;
+    return (fac[n]* modInverse(fac[r]) % MOD * modInverse(fac[n-r]) % MOD) % MOD;
+}
+
+void solve(int n){
+	int res = 0;
+	int i = (int)n/4;
+	while(i >= 1){
+		dp[i]=ch((int)n/i, 4);	
+		if(i <= (int)n/4){
+			for(int j = i*2; j <= (int)n/4; j += i) dp[i] -= dp[j]; 
+			i--;		
 		}
 	}
-	return sum;
-//	cout << sum << endl;
+	for(int i = 1; i <= (int)n/4; i++){
+		res = (res + ((((((dp[i] * i) % MOD) * i) % MOD) * i) % MOD) * i) % MOD;
+	}
+	cout << res << endl;
 }
 
 int main(void){BOOST
@@ -162,15 +154,13 @@ int main(void){BOOST
 	#ifdef LOCAL
 		freopen("input.1", "r", stdin);
 	#endif
-	cSum(100000);
-	int t;
-//	cin >> t;
-//	while(t--){
-	for(int n = 1; n < 100; n++){
-//		cin >> n;
-		int s = solve(n);
-		cout << s << " |-| " << aa[n] << endl; 
-		assert(s == aa[n]); }
+	fill_fac();
+	int t, n;
+	cin >> t;
+	while(t--){
+		cin >> n;
+		solve(n);
+	}
 	print_time("Time: ");
 	return 0;
 }
