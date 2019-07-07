@@ -103,6 +103,35 @@ static inline T pw(T a, T n, T mod) {
 }
 
 template <class T>
+static inline T gcdExtended(T a, T b, T *x, T *y) {
+    if (a == 0) {
+        *x = 0, *y = 1;
+        return b;
+    }
+    T x1, y1;
+    T gcd = gcdExtended(b%a, a, &x1, &y1);
+    *x = y1 - (b/a) * x1;
+    *y = x1;
+    return gcd;
+}
+
+template <class T>
+inline static T modInverse(T b, T m) {
+    T x, y;
+    T g = gcdExtended(b, m, &x, &y);
+    if (g != 1) return -1;
+    return (x%m + m) % m;
+}
+
+template <class T>
+inline static T mDiv(T a, T b, T m) {
+    a = a % m;
+    T inv = modInverse(b, m);
+    if (inv == -1) return -1;
+    else return (inv * a) % m;
+}
+
+template <class T>
 inline static T mul(T a, T b, T mod) { 
     T res = T(0); 
     a = a % mod; 
@@ -117,21 +146,34 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
-ll aa[1000000000], bb[1000000000];
-
-void preCom(ll MOD){
-	aa[0] = 1;
-	aa[1] = 2;
-	double f1 = 1.0 - sqrt(2), f2 = 1.0 + sqrt(2);	
-	for(ll i = 2; i <= (ll)10e18; i++){
-	}	
+ll ff(ll n, ll MOD){
+	ll m = n/2LL, u;
+	if(n&1) u = pw(3LL, m, MOD);
+	else{
+		if(!(m&1)) u = (pw(3LL, m, 2LL*MOD) + 5LL )/2LL;
+		else u = (pw(3LL, m, 2LL*MOD) - 1LL )/2LL;
+	}
+	return u % MOD;
 }
 
-//Recurrence relation: fn = 2fn-1 - fn-2 + 2: (1/2)(1-sqrt(2))^n + (1/2)(1+sqrt(2))^n **if n % 2 == 0
-//fn = 3fn-2: (1/6)(3 + sqrt(3))(sqrt(3))^n +  (1/6)(3 - sqrt(3))(-sqrt(3))^n **if n % 2 == 1
+ll nsum(ll N, ll MOD){
+	if(N==0) return 0;
+	ll n = N/4LL - 1LL;
+	ll f_sum = 0, s_sum = 0;
+	if(n > -1){
+		ll t1 = (20LL * pw(9LL, n+1, 16LL*MOD)) % MOD;
+		ll t2 = (32LL * n) % MOD;
+	       	f_sum =  mDiv((t1 + t2 + 12LL) % MOD, 16LL, MOD);
+		if(f_sum == -1)
+		       	f_sum =  (20LL * pw(9LL, n+1, 16LL*MOD)  + 32LL * n + 12LL) / 16LL;
+	}
+	for(ll i = 4LL*n+5LL; i <= N; i++) s_sum += ff(i, MOD);
+	return ((f_sum % MOD) + (s_sum % MOD)) % MOD;
+}
+
 void solve(ll l, ll r, ll MOD){
-	ll ans = 0;
-	cout << ans << endl;
+	ll ans = (nsum(r, MOD) + MOD - nsum(l - 1,MOD)) % MOD;
+	cout << ans%MOD << endl;
 }
 
 int main(void){BOOST
@@ -141,7 +183,6 @@ int main(void){BOOST
 	#endif
 	ll t, MOD, l, r;
 	cin >> t >> MOD;
-	preCom(MOD);
 	while(t--){
 		cin >> l >> r;
 		solve(l, r, MOD);
