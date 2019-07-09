@@ -115,8 +115,7 @@ inline static T mul(T a, T b, T mod) {
     return res % mod; 
 } 
 
-using namespace std;
-
+using namespace std; 
 int fac[100001], dp[260001];
 
 int modInverse(int n) {
