@@ -29,8 +29,8 @@
 #define MAX_LL ~(1 << 63)
 #define MIN_LL (1 << 63)
 
-typedef long long ll;
-typedef unsigned long long ull;
+typedef int64_t ll;
+typedef uint64_t ull;
 
 template<typename T>
 static inline T gcd(T a, T b) {
@@ -146,72 +146,21 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
-struct node{
-	int l;
-	int r;
-	int v;
-	int m;
-};
-
-void zero(node* aa, int i, int l, int r){
-	aa[i].v = 0;
-	aa[i].l = l;
-	aa[i].r = r;
-	aa[i].m = 0;
-	if(l == r) return;
-	int mid = (r + l) / 2;	
-	zero(aa, i*2, l, mid);
-	zero(aa, i*2 + 1, mid+1, r);
-}
-
-int uN(node* aa, int* ll, int i, int k){
-//	cout << "Set on node with range [" << aa[i].l << ", " << aa[i].r << "]\n";
-	aa[i].v += k;
-	aa[i].v += ll[i];
-	ll[i*2] += ll[i]+k;
-	ll[i*2 + 1] += ll[i]+k;
-	ll[i] = 0;
-	remax(aa[i].m, aa[i].v);
-	return aa[i].m;
-}
-
-int update(node* aa, int* ll, int i, int l, int r, int k){
-//	cout << "range in question: [" << aa[i].l << ", " << aa[i].r << "]\n";
-	if(l <= aa[i].l && aa[i].r <= r) return uN(aa, ll, i, k);
-	else if(aa[i].r < l || aa[i].l > r) return -1;
-	else return max(aa[i].m, max(update(aa, ll, i*2, l, r, k), update(aa, ll, i*2 + 1, l, r, k)));	
-}
-
-int f_update(node* aa, int* ll, int i){
-	if(aa[i].l >= aa[i].r) return aa[i].v + ll[i];
-	else{
-		aa[i].v += ll[i];
-		ll[i*2] += ll[i];
-		ll[i*2 + 1] += ll[i];
-		ll[i] = 0;
-		return max(f_update(aa, ll, i*2), f_update(aa, ll, i*2 + 1));
-	}
-}
-
-void print(node* aa, int i){
-	if(aa[i].l >= aa[i].r) cout << aa[i].v << " ";
-	else{ print(aa, i*2); print(aa, i*2 + 1);}
-}
-
-void solve(node* aa, int* ll, int n, int m){
-	zero(aa, 1, 1, n);
-	for(int i = 0; i < n*3 + 1; i++) ll[i] = 0;
-
-	int ans = 0;
+void solve(int n, int m){
+	ll ans = 0, l, r, k;
+	ll* aa = new ll[n+2];
+	for(int i = 0; i < n+2; i++) aa[i] = 0;
 	while(m--){
-		int l, r, k;
 		cin >> l >> r >> k;
-//		print(aa, 1);
-//		cout << endl;
-		ans = update(aa, ll, 1, l, r, k);
+		assert(1 <= l && l <= r && r <= n && k <= (ll)1e9);
+		aa[l] += k;
+		aa[r+1] -= k;	
 	}
-	ans = f_update(aa, ll, 1);
-//	print(aa, 1); cout << endl;
+	for(int i = 1; i < n+1; i++){
+		aa[i] += aa[i-1];
+		remax(ans, aa[i]);
+	}
+	delete []aa;
 	cout << ans << endl;
 }
 
@@ -222,11 +171,9 @@ int main(void){BOOST
 	#endif
 	int n, m;
 	cin >> n >> m;
-	node* aa = new node[n*3 + 1];
-	int* ll = new int[n*3 + 1];
-	solve(aa, ll, n, m);
-	delete []ll;
-	delete []aa;
+
+	solve(n, m);
+
 	print_time("Time: ");
 	return 0;
 }
