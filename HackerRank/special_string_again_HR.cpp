@@ -146,26 +146,76 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
-void solve(int n, string s){
-	int ans = 0;
-	int* aa = new int[26], cc = new int[3];
-	for(int i = 0; i < 26; i++) aa[i] = 0;
-	cc[0] = cc[1] = cc[2] = -1;
-	int i = 0;
-	for(int j = 0; j < 3; j++){
-		cc[j] = s[i++] - 97;
-		aa[cc[j]]++;
-		while(i < n && s[i]-97 == cc[j]){
-			i++;
-			aa[cc[j]]++;
-		}
-		ans += ((aa[cc[j]] * (aa[cc[j]]+1)) / 2);
+void swpp(int* a, int* b){
+	for(int i = 0; i < 27; i++){
+		swap(a[i], b[i]);
 	}
-	//Evaluate the first three.
-	//
-	//
-	//Finish the problem for remaining characters.
-	cout << ans << endl;
+}
+
+int eval_pal(int** aa){
+	if(aa[2][0] == aa[0][0] && aa[1][aa[1][0]] == 1) return min(aa[2][aa[2][0]], aa[0][aa[0][0]]);
+	return 0;
+}
+
+/* I made this solution more complicated than necessary, and it really didn't optimize any further
+ * than a slightly simpler solution would have been.
+ *
+ * A simipler solution would be to make a vector of std::pair<int, char> where the int represents the number of
+ * chars found sequentially. Then to go over this vector and compute the answer. 
+ * This would simplify the look of the code and shorten it as well.
+ * 
+ * My solution below has a 2D array of int. Where the zeroeth element of each row holds the char, and the 
+ * remaining spaces hold the count for that particular char. This made things slightly overcomplicated. Originally
+ * I thought this idea may save a little on space and would optimize time complexity, however, it was 
+ * overly complicated for how little it actually would have saved.
+ *
+ * Lesson learned.
+ * */
+int solve(int n, string s){
+	int ans = 0;
+	int** aa = new int*[3];
+	for(int i = 0; i < 3; i++){ 
+		aa[i] = new int[27];
+		for(int k = 0; k <= 26; k++) aa[i][k] = 0;
+	}
+	aa[0][0] = aa[1][0] = aa[2][0] = -1;
+	int i = 0;
+	//This fist for loop sets the matrix witht he inital values. Could be simplified.
+	//However it's not worth my time to refactor the code
+	for(int j = 0; j < 3; j++){
+		if(i < n){
+		       	aa[j][0] = s[i++] - 97 + 1;
+			aa[j][aa[j][0]]++;
+		}else break;
+		while(i < n && s[i]-97 + 1 == aa[j][0]){
+			i++;
+			aa[j][aa[j][0]]++;
+		}
+		if(j < 2) ans += ((aa[j][aa[j][0]] * (aa[j][aa[j][0]]+1)) / 2);
+	}
+	
+	//This while loop takes care of all theh following sequences after the inital three.
+	while(i <= n){
+		if(i < n && s[i]-97+1 != aa[2][0]){
+			ans += eval_pal(aa);
+			ans += ((aa[2][aa[2][0]] * (aa[2][aa[2][0]]+1)) / 2);
+			swpp(aa[0], aa[1]);
+			swpp(aa[1], aa[2]);
+			aa[2][aa[2][0]] = 0;
+			aa[2][0] = s[i++] - 97 + 1;
+			aa[2][aa[2][0]]++;
+		}else if(i == n){
+			ans += eval_pal(aa);
+			ans += ((aa[2][aa[2][0]] * (aa[2][aa[2][0]]+1)) / 2);
+			i++;
+		}else{
+			i++;
+			aa[2][aa[2][0]]++;
+		}
+	}
+	for(int k = 0; k < 3; k++) delete []aa[k];
+	delete []aa;
+	return ans;
 }
 
 int main(void){BOOST
@@ -177,7 +227,7 @@ int main(void){BOOST
 	cin >> n;
 	string s;
 	cin >> s;
-	solve(n, s);
+	cout << solve(n, s) << endl;
 	print_time("Time: ");
 	return 0;
 }
