@@ -146,19 +146,25 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
-void solve(int n, int k){
-	int* aa = new int[n];
-	for(int i = 0; i < n; i++) cin >> aa[i];
-	int i = 0, j = n-1, ans = 0;
-	sort(aa, aa+n);
-	while(i < j){
-		int d = aa[j] - aa[i];
-		if(d == k){
-			ans++;
-			j--;
-		}else if(d < k) j++;
-		else i++;
+void solve(int n, string s){
+	int ans = 0;
+	int* aa = new int[26], cc = new int[3];
+	for(int i = 0; i < 26; i++) aa[i] = 0;
+	cc[0] = cc[1] = cc[2] = -1;
+	int i = 0;
+	for(int j = 0; j < 3; j++){
+		cc[j] = s[i++] - 97;
+		aa[cc[j]]++;
+		while(i < n && s[i]-97 == cc[j]){
+			i++;
+			aa[cc[j]]++;
+		}
+		ans += ((aa[cc[j]] * (aa[cc[j]]+1)) / 2);
 	}
+	//Evaluate the first three.
+	//
+	//
+	//Finish the problem for remaining characters.
 	cout << ans << endl;
 }
 
@@ -167,9 +173,11 @@ int main(void){BOOST
 	#ifdef LOCAL
 		freopen("input.1", "r", stdin);
 	#endif
-	int n, k;
-	cin >> n >> k;
-	solve(n, k);
+	int n;
+	cin >> n;
+	string s;
+	cin >> s;
+	solve(n, s);
 	print_time("Time: ");
 	return 0;
 }
