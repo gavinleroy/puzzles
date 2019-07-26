@@ -172,21 +172,17 @@ void solve(int n){
 void solve_n(int n){
 	stack<int> ss;
 	int ans = 0;
-	int* hh = new int[n];
+	int* hh = new int[n+1];
 	for(int i = 0; i < n; i++) cin >> hh[i];
+	hh[n] = 0; // Append 0 to end in order to catch the case of buildings still left in the stack.
 	int i = 0;
-	while( i < n){
+	while( i <= n){
 		if(ss.empty() || hh[ss.top()] <= hh[i]) ss.push(i++);
 		else{
 			int t = ss.top();
 			ss.pop();
 			remax(ans, hh[t] * ((ss.empty()) ? i: i-ss.top()-1));
 		}
-	}
-	while(!ss.empty()){
-		int t = ss.top();
-		ss.pop();
-		remax(ans, hh[t] * ((ss.empty()) ? i: i-ss.top()-1));
 	}
 	cout << ans << endl;
 }
