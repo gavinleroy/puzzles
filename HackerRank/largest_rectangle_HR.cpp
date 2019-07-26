@@ -148,6 +148,7 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
+//Below solution is O(n^2) 
 void solve(int n){
 	int ans = 0;
 	int* hh = new int[n];
@@ -167,6 +168,29 @@ void solve(int n){
 	cout << ans << endl;
 }
 
+//Below solution is O(n)
+void solve_n(int n){
+	stack<int> ss;
+	int ans = 0;
+	int* hh = new int[n];
+	for(int i = 0; i < n; i++) cin >> hh[i];
+	int i = 0;
+	while( i < n){
+		if(ss.empty() || hh[ss.top()] <= hh[i]) ss.push(i++);
+		else{
+			int t = ss.top();
+			ss.pop();
+			remax(ans, hh[t] * ((ss.empty()) ? i: i-ss.top()-1));
+		}
+	}
+	while(!ss.empty()){
+		int t = ss.top();
+		ss.pop();
+		remax(ans, hh[t] * ((ss.empty()) ? i: i-ss.top()-1));
+	}
+	cout << ans << endl;
+}
+
 int main(void){BOOST
 	init_time();
 	#ifdef LOCAL
@@ -174,7 +198,7 @@ int main(void){BOOST
 	#endif
 	int n;
 	cin >> n;
-	solve(n);
+	solve_n(n);
 	print_time("Time: ");
 	return 0;
 }
