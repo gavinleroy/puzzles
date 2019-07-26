@@ -148,12 +148,33 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
+void solve(int n){
+	int ans = 0;
+	int* hh = new int[n];
+	for(int i = 0; i < n; i++) cin >> hh[i];
+	for(int i = 0; i < n; i++){
+		int c = 0;
+		for(int j = i; j >= 0; j--){
+			if(hh[j] >= hh[i]) c++;
+			else break;
+		}
+		for(int j = i+1; j < n; j++){
+			if(hh[j] >= hh[i]) c++;
+			else break;
+		}
+		remax(ans, hh[i] * c);
+	}
+	cout << ans << endl;
+}
+
 int main(void){BOOST
 	init_time();
 	#ifdef LOCAL
 		freopen("input.1", "r", stdin);
 	#endif
-
+	int n;
+	cin >> n;
+	solve(n);
 	print_time("Time: ");
 	return 0;
 }
