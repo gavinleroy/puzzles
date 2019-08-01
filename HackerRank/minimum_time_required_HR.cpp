@@ -148,10 +148,10 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
-void solve(int* aa, int n, int g, int mx, int mn){
-	int up = ceil(g/n)*mx, low = ceil(g/n)*mn;
+void solve(ll* aa, ll n, ll g, ll mx){
+	ll up = mx*g, low = 0;
 	while(low < up){
-		int mid = (up+low) / 2, sum = 0;
+		ll mid = (up+low) / 2, sum = 0;
 		for(int i = 0; i < n; i++) sum += mid/aa[i];
 		if(sum >= g) up = mid;
 		else low = mid+1;
@@ -164,15 +164,14 @@ int main(void){BOOST
 	#ifdef LOCAL
 		freopen("input.1", "r", stdin);
 	#endif
-	int n, g, mn = MAX_INT, mx = MIN_INT;
+	ll n, g, mx = MIN_INT;
 	cin >> n >> g;
-	int* aa = new int[n];
+	ll* aa = new ll[n];
 	for(int i = 0; i < n; i++){
 		cin >> aa[i];
 		remax(mx, aa[i]);
-		remin(mn, aa[i]);
 	}
-	solve(aa, n, g, mx, mn);
+	solve(aa, n, g, mx);
 	print_time("Time: ");
 	return 0;
 }
