@@ -148,12 +148,79 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
+int* prev_sm(int* aa, int n){
+	stack<int> ss;
+	int* paa = new int[n];
+	ss.push(n-1);
+	for(int i = n-2; i >= 0; i--){
+		if(ss.empty()) ss.push(i);
+		else{
+			while(!ss.empty() && aa[i] < aa[ss.top()]){
+				paa[ss.top()] = i;
+				ss.pop();
+			}
+			ss.push(i);
+		}
+	}
+	while(!ss.empty()){
+		paa[ss.top()] = -1;
+		ss.pop();
+	}
+	return paa;
+}
+
+int* next_sm(int* aa, int n){
+	stack<int> ss;
+	int* naa = new int[n];
+	ss.push(0);
+	for(int i = 0; i < n; i++){
+		if(ss.empty()) ss.push(i);
+		else{
+			while(aa[i] < aa[ss.top()]){
+				naa[ss.top()] = i;
+				ss.pop();
+			}
+			ss.push(i);
+		}
+	}
+	while(!ss.empty()){
+		naa[ss.top()] = n;
+		ss.pop();
+	}
+	return naa;
+}
+
+void solve(int n){
+	int* aa = new int[n];
+	for(int i = 0; i < n; i++) cin >> aa[i];
+	int* naa;
+        int* paa;
+	paa = prev_sm(aa, n);
+	naa = next_sm(aa, n);
+	int* ans = new int[n+1];
+	for(int i = 0; i <= n; i++) ans[i] = 0;
+	for(int i = 0; i < n; i++){
+		int t = naa[i] - paa[i] - 1;
+		remax(ans[t], aa[i]);
+	}
+	for(int i = n-1; i > 0; i--) remax(ans[i], ans[i+1]);
+
+	for(int i = 1; i <= n; i++) cout << ans[i] << " ";
+	cout << endl;
+	delete []aa;
+	delete []paa;
+	delete []naa;
+	delete []ans;
+}
+
 int main(void){BOOST
 	init_time();
 	#ifdef LOCAL
 		freopen("input.1", "r", stdin);
 	#endif
-
+	int n;
+	cin >> n;
+	solve(n);	
 	print_time("Time: ");
 	return 0;
 }
