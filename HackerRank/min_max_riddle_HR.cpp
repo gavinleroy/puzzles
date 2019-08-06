@@ -176,7 +176,7 @@ int* next_sm(int* aa, int n){
 	for(int i = 0; i < n; i++){
 		if(ss.empty()) ss.push(i);
 		else{
-			while(aa[i] < aa[ss.top()]){
+			while(!ss.empty() && aa[i] < aa[ss.top()]){
 				naa[ss.top()] = i;
 				ss.pop();
 			}
