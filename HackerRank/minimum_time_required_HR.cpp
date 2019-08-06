@@ -172,6 +172,7 @@ int main(void){BOOST
 		remax(mx, aa[i]);
 	}
 	solve(aa, n, g, mx);
+	delete []aa;
 	print_time("Time: ");
 	return 0;
 }
