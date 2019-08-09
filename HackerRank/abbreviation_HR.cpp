@@ -148,26 +148,28 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
+//Solution not fast enough, need to do regular DP to solve within time bound.
+bool dp(string a, string b, int ae, int be){
+	if(ae < 0 && be < 0) return true;
+	else if(ae < 0 && be >= 0) return false;
+	else if(ae >= 0 && be < 0){
+		for(int i = 0; i <= ae; i++)
+			if(a[i] <= 'Z') return false;
+		return true;
+	}else{
+		if(a[ae] == b[be]) 
+			return dp(a, b, ae-1, be-1);
+		else if(a[ae] >= 'a' && toupper(a[ae]) == b[be]) 
+			return (dp(a, b, ae-1, be-1) || dp(a, b, ae-1, be));
+		else if(a[ae] <= 'Z' && a[ae] != b[be]) 
+			return false;
+		else 
+			return dp(a, b, ae-1, be);
+	}
+}
+
 void solve(string a, string b){
-	int ia = 0, ib = 0;
-	while(ia < a.size() && ib < b.size()){
-		cout << "A: " << a[ia] << " B: " << b[ib] << endl;
-		if(a[ia] == b[ib] || toupper(a[ia]) == b[ib]){
-			ia++;
-			ib++;
-		}else if('A' <= a[ia] && a[ia] <= 'Z'){
-			cout << "NO\n";
-			return;
-		}else ia++;	
-	}
-	while(ia < a.size()){
-		if('A' <= a[ia] && a[ia++] <= 'Z'){
-			cout << "NO\n";
-			return;
-		}else ia++;
-	}
-	cout << "Got through all chars\n";
-	cout << ((ib >= b.size()) ? "YES": "NO") << endl;
+	cout << ((dp(a, b, a.size()-1, b.size()-1)) ? "YES": "NO") << endl;
 }
 
 int main(void){BOOST
