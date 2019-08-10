@@ -168,8 +168,27 @@ bool dp(string a, string b, int ae, int be){
 	}
 }
 
+bool dp(string a, string b){
+	int** mm = new int*[a.size()+1];
+	for(int i = 0; i <= a.size(); i++){
+		mm[i] = new int[b.size()+1];
+		for(int j = 0; j <= b.size(); j++) mm[i][j] = 0;
+	}
+	mm[0][0] = 1;
+	for(int i = 1; i <= a.size(); i++){
+		if(a[0] == b[i] || toupper(a[0]) == b[i]) mm[1][i] = 1;
+		remax(mm[1][i], mm[1][i-1]);
+	}
+	for(int i = 2; i <= a.size(); i++){
+		for(int k = 1; k <= b.size(); k++){
+			
+		}
+	}
+}
+
 void solve(string a, string b){
-	cout << ((dp(a, b, a.size()-1, b.size()-1)) ? "YES": "NO") << endl;
+//	cout << ((dp(a, b, a.size()-1, b.size()-1)) ? "YES": "NO") << endl;
+	cout << ((dp(a,b)) ? "YES": "NO") << endl;
 }
 
 int main(void){BOOST
