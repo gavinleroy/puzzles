@@ -184,7 +184,7 @@ bool dp(string a, string b){
 	for(int i = 1; i <= a.size(); i++){
 		for(int k = 1; k <= b.size(); k++){
 			if(a[i-1] == b[k-1]) mm[i][k] = mm[i-1][k-1];
-			else if(toupper(a[i-1] == b[k-1]) mm[i][k] = mm[i-1][k-1]|mm[i-1][k];	
+			else if(toupper(a[i-1]) == b[k-1]) mm[i][k] = mm[i-1][k-1]|mm[i-1][k];	
 			else if(a[i-1] <= 'Z') mm[i][k] = 0;
 			else mm[i][k] = mm[i-1][k];
 		}
