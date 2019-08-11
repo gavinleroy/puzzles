@@ -172,18 +172,24 @@ bool dp(string a, string b){
 	int** mm = new int*[a.size()+1];
 	for(int i = 0; i <= a.size(); i++){
 		mm[i] = new int[b.size()+1];
-		for(int j = 0; j <= b.size(); j++) mm[i][j] = 0;
+		for(int j = 0; j <= b.size(); j++){
+			if(i > 0) break;
+		       	mm[i][j] = 0;
+		}
+		if(i > 0){
+			if(a[i-1] <= 'Z') mm[i][0] = 0;
+			else mm[i][0] = min(1, mm[i-1][0]);
+		}else mm[0][0] = 1;
 	}
-	mm[0][0] = 1;
 	for(int i = 1; i <= a.size(); i++){
-		if(a[0] == b[i] || toupper(a[0]) == b[i]) mm[1][i] = 1;
-		remax(mm[1][i], mm[1][i-1]);
-	}
-	for(int i = 2; i <= a.size(); i++){
 		for(int k = 1; k <= b.size(); k++){
-			
+			if(a[i-1] == b[k-1]) mm[i][k] = mm[i-1][k-1];
+			else if(toupper(a[i-1] == b[k-1]) mm[i][k] = mm[i-1][k-1]|mm[i-1][k];	
+			else if(a[i-1] <= 'Z') mm[i][k] = 0;
+			else mm[i][k] = mm[i-1][k];
 		}
 	}
+	return mm[a.size()][b.size()];
 }
 
 void solve(string a, string b){
