@@ -149,7 +149,10 @@ inline static T mul(T a, T b, T mod) {
 using namespace std;
 
 ll solve(ll* aa, ll n, ll MOD){
-	
+	ll maxS = 0;
+	for(ll i = 0; i < n; i++){
+		
+	}	
 }
 
 int main(void){BOOST
