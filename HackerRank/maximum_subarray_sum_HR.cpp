@@ -148,11 +148,17 @@ inline static T mul(T a, T b, T mod) {
 
 using namespace std;
 
-ll solve(ll* aa, ll n, ll MOD){
-	ll maxS = 0;
+void solve(ll* aa, ll n, ll MOD){
+	ll maxS = 0, currS = 0;
+	set<ll> pre;
 	for(ll i = 0; i < n; i++){
-		
+		currS = (currS + aa[i] % MOD) % MOD;
+		auto itr = pre.upper_bound(currS);
+		if(itr != pre.end()) remax(maxS, (currS - (*itr) + MOD) % MOD);	
+		remax(maxS, currS);
+		pre.insert(currS);
 	}	
+	cout << maxS << endl;
 }
 
 int main(void){BOOST
