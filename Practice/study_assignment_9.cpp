@@ -1,5 +1,4 @@
 #include <cstdio>
-#include <iostream>
 #include<cmath>
 #include <algorithm>
 #include <string>
@@ -144,6 +143,6 @@ int main(){
 	string dM = Direct_Mapped(STREAM) + "\n";
 	string fA = Fully_Associative(STREAM) + "\n";
 	string sA = Set_Associative(STREAM) + "\n";
-	cout << dM << fA << sA;
+	printf("%s%s%s", dM.c_str(), fA.c_str(), sA.c_str());
 	return 0;
 }
