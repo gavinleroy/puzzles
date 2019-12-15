@@ -1,3 +1,4 @@
+// Author Gavin Gray, University of Utah 
 #include <map>
 #include <vector>
 #include <string>
