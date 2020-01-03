@@ -3,7 +3,7 @@ FILE = "MY_FILE.txt"
 euclidean(x,y) = return sqrt((x[1]-y[1])^2 + (x[2]-y[2])^2)
 f(s) = return parse.(Int, split(s, ' '))
 
-function w(d, p)
+function w(d, p=[-1,-1])
 	filter!(x->x≠p, d)
 	open(FILE, "w") do io
 		for p in d
