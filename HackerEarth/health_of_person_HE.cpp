@@ -151,8 +151,8 @@ using namespace std;
 void solve(int n, int m, int* aa, int* bb, int* rr){
 	for(int i=1;i<=m;i++){
 		for(int k=i;k<=n;k+=i){
-			if(rr[k] != -1) continue;
-			if(aa[k] <= bb[i]) rr[k] = i;
+			if(rr[k] == -1) 
+				if(aa[k] <= bb[i]) rr[k] = i;
 		}	
 	}
 	for(int i=1;i<=n;i++)
