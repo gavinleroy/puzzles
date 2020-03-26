@@ -37,24 +37,28 @@ template<typename T>struct FWRITE{T P;I FWRITE&OP,(int x){WI(10);RT}I FWRITE&OP(
 using namespace std;
 
 int main(){
-	int t, n, a1, a2,d;
+	int t, n, d, a1[50000], a2[50000];
 	char c1;
 	bool diff;
 	for(t=in;t--;){
 		in,n;
 		diff=false;
-		a1=a2=0;
 		for(int i=0;i<n;i++){
 			in,c1;
 			d=c1-'0';
-			a1*=10,a2*=10;
-			if(diff) a2+=d;
-			else{
-				if(d==1) a1+=1,diff=true;
-				else if(d==2) a1+=1,a2+=1;
+			if(diff){
+				a1[i]=0;
+				a2[i]=d;
+			}else{
+				if(d==1) a1[i]=1,a2[i]=0,diff=true;
+				else if(d==2) a1[i]=1,a2[i]=1;
+				else a1[i]=a2[i]=0;
 			}
 		}
-		out,a1,'\n',a2,'\n';
+		for(int i=0;i<n;i++)out,a1[i];
+		out,'\n';
+		for(int i=0;i<n;i++)out,a2[i];
+		out,'\n';
 	}
 	return 0;
 }

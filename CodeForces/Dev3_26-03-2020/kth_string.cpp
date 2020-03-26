@@ -37,17 +37,46 @@ template<typename T>struct FWRITE{T P;I FWRITE&OP,(int x){WI(10);RT}I FWRITE&OP(
 
 using namespace std;
 
+void solve(int n, int i){
+	int j, k = 0;
+	char *s = new char[n];
+	char *perm = new char[n];
+
+	while (k < n-2)
+		s[k] = 'a';
+	s[n-2]=s[n-1]='b';
+
+	for (k = 0; k < n; ++k){
+		perm[k] = i / s[n - 1 - k];
+		i = i % s[n - 1 - k];
+	}
+
+	// readjust values to obtain the permutation
+	// start from the end and check if preceding values are lower
+	for (k = n - 1; k > 0; --k)
+		for (j = k - 1; j >= 0; --j)
+			if (perm[j] <= perm[k])
+				perm[k]++;
+
+	// print permutation
+	for (k = 0; k < n; ++k)
+		printf("%d ", perm[k]);
+	printf("\n");
+
+	free(fact);
+	free(perm);
+}
+
 int main(){
 	for(int t=in;t--;){
 		int n, k;
 		ll itrs = 1;
 		in,n,k;
-		char *s = new char[n];
-		for(int i = 0; i < n-2; i++) s[i]='a';
-		s[n-2]=s[n-1]='b';
-		while(itrs++<k && next_permutation(s, s+n));
-		out,s,'\n';
-		delete []s;
+		solve(n, k);
 	}
+
+
+
+
 	return 0;
 }
