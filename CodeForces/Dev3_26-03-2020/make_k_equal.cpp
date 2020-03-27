@@ -8,8 +8,8 @@ typedef double lf;
 typedef long double llf;
 typedef bool bl;
 #define I __attribute__((always_inline))inline
-template<typename T> I T max(T a,T b){return a>b?a:b;}
-template<typename T> I T min(T a,T b){return a<b?a:b;}
+//template<typename T> I T max(T a,T b){return a>b?a:b;}
+//template<typename T> I T min(T a,T b){return a<b?a:b;}
 template<typename T> I T abs(T a){return a>0?a:-a;}
 #define RUC register unsigned char
 #define RC register char
@@ -32,33 +32,52 @@ template<typename T> struct FREAD{T P;I OP bl(){return !P.err;}I FREAD&OP,(int&x
 x=-x;while(y--){x*=10;x-=floor(x*0.1)*10;P(((int)x)%10+'0');}}else if(x>=0)*this,(ll)(x+0.5);else *this,(ll)(x-0.5);
 #define WU(S) if(x){RUC s[S],c=0;while(x)s[c++]=x%10+'0',x/=10;while(c--)P(s[c]);}else P('0')
 template<typename T>struct FWRITE{T P;I FWRITE&OP,(int x){WI(10);RT}I FWRITE&OP()(int x){WI(10);RT}I FWRITE&OP,(uint x){WU(10);RT}I FWRITE&OP()(uint x){WU(10);RT}I FWRITE&OP,(ll x){WI(19);RT}I FWRITE&OP()(ll x){WI(19);RT}I FWRITE&OP,(ull x){WU(20);RT}I FWRITE&OP()(ull x){WU(20);RT}I FWRITE&OP,(ul x){WU(20);RT}I FWRITE&OP()(ul x){WU(20);RT}I FWRITE&OP,(char x){P(x);RT}I FWRITE&OP()(char x){P(x);RT}I FWRITE&OP,(const char*x){while(*x)P(*x++);RT}I FWRITE&OP()(const char*x){while(*x)P(*x++);RT}I FWRITE&OP,(const SS & x){*this,x.c_str();RT}I FWRITE&OP()(const SS & x){*this(x.c_str());RT}I FWRITE&OP()(lf x,int y){WL;RT}I FWRITE&OP()(llf x,int y){WL;RT}};FWRITE<CHARP>out;
-// DONE I/O ------------------------------------------------------------------------------------------->
+// DONE I/O ______------------------------------------------------------------------------------------------->
+
+#include <algorithm>
+#include <climits>
+#include <map>
+
+#define NL '\n'
+#define F first
+#define S second
 
 using namespace std;
 
-int equal(int *aa, int n){
-	int bb[1000];
-	int mx = 0;
-	for(int i=0;i<1000;i++)bb[i]=0;
-	out,"here\n";
-	for(int i=0; i < n; i++){
-		bb[aa[i]]++;
-		mx = ::max(mx, bb[aa[i]]);
+const ll inf = 1e18;
+ 
+void solve(int *aa, int n, int k) {
+	sort (aa, aa+n);
+	ll *P = new ll[n+1];
+	P[0] = 0;
+	for (int i = 1; i <= n; i++) 
+		P[i] = P[i-1] + aa[i-1];
+	ll answer = inf;
+	for (int i = 0; i < n;) {
+		int j = i;
+		while (j < n && aa[i] == aa[j]) j++;
+		int same_count = j - i;
+		ll cost_left = (ll)i * (aa[i] - 1) - P[i];
+		ll cost_right = P[n] - P[j] - (ll) (n - j) * (aa[i] + 1);
+		
+		if (same_count >= k)
+			answer = 0ll;
+		if (same_count + i >= k)
+			answer = min(answer, cost_left + k - same_count);
+		if (same_count + n - j >= k)
+			answer = min(answer, cost_right + k - same_count);
+		answer = min(answer, cost_left + cost_right + k - same_count);
+		i = j;
 	}
-	return mx;
+	out,max(answer, 0ll),NL;
+	delete []P;
 }
-
-int solve(int *aa, int n, int k){
-	return 0;
-}
-
 int main(){
 	int n, k, *aa;
 	in,n,k;
-	aa = new int[n];
-	for(int i = n; i--;) in,aa[i];
-	if(k==1) out,"0\n";
-	else out,equal(aa, n),'\n';
+	aa = new int[n]; 
+	for(int i = 0; i < n; in,aa[i++]); //Read in array values.
+	out,solve(aa, n, k),NL;
 	delete []aa;
 	return 0;
 }
