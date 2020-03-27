@@ -35,39 +35,39 @@ template<typename T>struct FWRITE{T P;I FWRITE&OP,(int x){WI(10);RT}I FWRITE&OP(
 // DONE I/O ______------------------------------------------------------------------------------------------->
 
 #include <algorithm>
-#include <climits>
-#include <map>
-
-#define NL '\n'
-#define F first
-#define S second
 
 using namespace std;
 
 const ll inf = 1e18;
+#define NL '\n'
  
 void solve(int *aa, int n, int k) {
 	sort (aa, aa+n);
 	ll *P = new ll[n+1];
 	P[0] = 0;
-	for (int i = 1; i <= n; i++) 
+	for (int i = 1; i <= n; i++) // Create prefix sum array
 		P[i] = P[i-1] + aa[i-1];
+
 	ll answer = inf;
 	for (int i = 0; i < n;) {
 		int j = i;
+		// Find how far this bucket stretches
 		while (j < n && aa[i] == aa[j]) j++;
 		int same_count = j - i;
+		// Compute cost of movinga ll numbers to the left, to bucket-1
 		ll cost_left = (ll)i * (aa[i] - 1) - P[i];
+		// Compute cost of moving all numbers to the right, to bucket+1
 		ll cost_right = P[n] - P[j] - (ll) (n - j) * (aa[i] + 1);
 		
-		if (same_count >= k)
+		if (same_count >= k) // If our current bucket has enough
 			answer = 0ll;
-		if (same_count + i >= k)
+		if (same_count + i >= k) // If there is enough to our left
 			answer = min(answer, cost_left + k - same_count);
-		if (same_count + n - j >= k)
+		if (same_count + n - j >= k) // If there is enough to our right
 			answer = min(answer, cost_right + k - same_count);
+		// We can always bring in both sides.
 		answer = min(answer, cost_left + cost_right + k - same_count);
-		i = j;
+		i = j; // Skip over the rest of the elements in this bucket.
 	}
 	out,max(answer, 0ll),NL;
 	delete []P;
@@ -77,7 +77,7 @@ int main(){
 	in,n,k;
 	aa = new int[n]; 
 	for(int i = 0; i < n; in,aa[i++]); //Read in array values.
-	out,solve(aa, n, k),NL;
+	solve(aa, n, k);
 	delete []aa;
 	return 0;
 }
