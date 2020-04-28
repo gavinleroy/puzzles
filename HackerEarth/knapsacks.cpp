@@ -40,32 +40,32 @@ x=-x;while(y--){x*=10;x-=floor(x*0.1)*10;P(((int)x)%10+'0');}}else if(x>=0)*this
 #define WU(S) if(x){UC s[S],c=0;while(x)s[c++]=x%10+'0',x/=10;while(c--)P(s[c]);}else P('0')
 template<typename T>struct FWRITE{T P;I FWRITE&OP,(int x){WI(10);RT}I FWRITE&OP()(int x){WI(10);RT}I FWRITE&OP,(uint x){WU(10);RT}I FWRITE&OP()(uint x){WU(10);RT}I FWRITE&OP,(ll x){WI(19);RT}I FWRITE&OP()(ll x){WI(19);RT}I FWRITE&OP,(ull x){WU(20);RT}I FWRITE&OP()(ull x){WU(20);RT}I FWRITE&OP,(ul x){WU(20);RT}I FWRITE&OP()(ul x){WU(20);RT}I FWRITE&OP,(char x){P(x);RT}I FWRITE&OP()(char x){P(x);RT}I FWRITE&OP,(const char*x){while(*x)P(*x++);RT}I FWRITE&OP()(const char*x){while(*x)P(*x++);RT}I FWRITE&OP,(const SS & x){*this,x.c_str();RT}I FWRITE&OP()(const SS & x){*this(x.c_str());RT}I FWRITE&OP()(lf x,int y){WL;RT}I FWRITE&OP()(llf x,int y){WL;RT}};FWRITE<CHARP>out;
 // DONE I/O ------------------------------------------------------------------------------------------------------>
+// DP with states (index, value).
+// DP[i][val] is minimum knapsack capacity required to achieve val as total value by 
+// selecting from objects 1,2,3,...i. Since v[i] <= 50 maximum possible val is 50000. 
+// The DP transitions are identical to knapsack.
+//Answer is the maximum val with DP[n-1][val] <= c
 #include <algorithm>
 #include <utility>
 #define NL '\n'
 #define INIT -1
-
+#define MAX 1e9
 using namespace std;
 
-int vv[1001],ww[1001];
-
-int getval(int c, int * aa){
-	if(c < 0) return 0;
-	else return aa[c];
-}
+const int maxn=1e3+14,maxv=maxn*50;
+int vv[maxn],ww[maxn],dp[maxv];
 
 void solve(int n, int c){
-	int * rc = new int[2000001], * rp = new int[2000001];
-	fill(rp, rp+2000001, 0);
-	for(int i=0;i<=n;i++){
-		for(int j=0;j<=c;j++){
-			if(ww[i] <= j) rc[j] = vv[i] + getval(j-ww[i], rp);
-			else rc[j] = 0;
-			rc[j] = ::max(rc[j], getval(j, rp));
-		}
-		swap(rc, rp);
+	for(int i=0;i<n;i++){
+		for(int val=maxv-1;val>=vv[i];val--) 
+			dp[val]=::min(dp[val],dp[val-vv[i]]+ww[i]);
+		for(int val=vv[i];val>=0;val--) 
+			dp[val]=::min(dp[val],dp[val+1]);
 	}
-	out,rp[c],NL;
+	int ans = 0;
+	for(int i=0;i<maxv;i++)
+		if(dp[i] <= c) ans = i;
+	out,ans,NL;
 }
 
 int main(){
@@ -74,8 +74,10 @@ int main(){
 #endif
 	int n,c;
 	in,n,c;
+	fill(dp, dp+maxv, MAX);
 	for(int i=0;i<n;in,vv[i++]);
 	for(int i=0;i<n;in,ww[i++]);
-	solve(n-1, c);
+	dp[0]=0;
+	solve(n, c);
 	return 0;
 }
