@@ -32,79 +32,40 @@ if(t=='-')t=P(),f=1; x=t-'0';for(t=P();t>='0'&&t<='9'&&ERR; t=P()) x=x*10+t-'0'
 #define RL if(t=='.'){lf u=0.1;for(t=P();t>='0'&&t<='9'&&ERR;t=P(),u*=0.1)x+=u*(t-'0');}if(f)x=-x
 #define RU x=0; UC t=P(); while((t<'0'||t>'9')&&ERR)t=P();x=t-'0';\
 for(t=P();t>='0'&&t<='9'&&ERR;t=P())x=x*10+t-'0'
-I bool IS(char x){ return x==10||x==13; }
+I bool IS(char x){ return x==10||x==13||x==' '; }
 template<typename T> struct FREAD{T P;I OP bl(){return ERR;}I FREAD&OP,(int&x){RX; if(f)x=-x; RT }I OP int(){int x;TR}I FREAD&OP,(ll & x){RX;if(f)x=-x;RT}I OP ll(){ll x;TR}I FREAD&OP,(char & x){for(x=P();IS(x)&&ERR;x=P());RT}I OP char(){char x;TR}I FREAD&OP,(char* x){UC t=P();for(;IS(t)&&ERR;t=P());if(~t){for(;!IS(t)&&~t&&ERR;t=P())*x++=t;}*x++=0;RT}I FREAD&OP,(lf&x){RX;RL;RT}I OP lf(){lf x;TR}I FREAD&OP,(llf&x){RX;RL;RT}I OP llf() {llf x;TR}I FREAD&OP,(uint&x){RU;RT}I OP uint(){uint x;TR}I FREAD&OP,(ull&x){RU;RT}I OP ull(){ull x;TR}I FREAD&OP,(ul&x){RU;RT}I OP ul(){ul x;TR}};FREAD<CHARG>in;
 #define WI(S) if(x){if(x<0)P('-'),x=-x;UC s[S],c=0;while(x)s[c++]=x%10+'0',x/=10;while(c--)P(s[c]);}else P('0')
 #define WL if(y){lf t=0.5;for(int i=y;i--;)t*=0.1;if(x>=0)x+=t;else x-=t,P('-');*this,(ll)(abs(x));P('.');if(x<0)\
 x=-x;while(y--){x*=10;x-=floor(x*0.1)*10;P(((int)x)%10+'0');}}else if(x>=0)*this,(ll)(x+0.5);else *this,(ll)(x-0.5);
 #define WU(S) if(x){UC s[S],c=0;while(x)s[c++]=x%10+'0',x/=10;while(c--)P(s[c]);}else P('0')
-template<typename T>struct FWRITE{T P;I FWRITE&OP,(int x){WI(10);RT}I FWRITE&OP()(int x){WI(10);RT}I FWRITE&OP,(uint x){WU(10);RT}I FWRITE&OP()(uint x){WU(10);RT}I FWRITE&OP,(ll x){WI(19);RT}I FWRITE&OP()(ll x){WI(19);RT}I FWRITE&OP,(ull x){WU(20);RT}I FWRITE&OP()(ull x){WU(20);RT}I FWRITE&OP,(ul x){WU(20);RT}I FWRITE&OP()(ul x){WU(20);RT}I FWRITE&OP,(char x){P(x);RT}I FWRITE&OP()(char x){P(x);RT}I FWRITE&OP,(const char*x){while(*x)P(*x++);RT}I FWRITE&OP()(const char*x){while(*x)P(*x++);RT}I FWRITE&OP,(const SS & x){*this,x.c_str();RT}I FWRITE&OP()(const SS & x){*this(x.c_str());RT}I FWRITE&OP()(lf x,int y){WL;RT}I FWRITE&OP()(llf x,int y){WL;RT}};FWRITE<CHARP>out;
+template<typename T>struct FWRITE{T P;I FWRITE&OP,(int x){WI(10);RT}I FWRITE&OP()(int x){WI(10);RT}I FWRITE&OP,(uint x){WU(10);RT}I FWRITE&OP()(uint x){WU(10);RT}I FWRITE&OP,(ll x){WI(19);RT}I FWRITE&OP()(ll x){WI(19);RT}I FWRITE&OP,(ull x){WU(20);RT}I FWRITE&OP()(ull x){WU(20);RT}I FWRITE&OP,(ul x){WU(20);RT}I FWRITE&OP()(ul x){WU(20);RT}I FWRITE&OP,(char x){P(x);RT}I FWRITE&OP()(char x){P(x);RT}
+	I FWRITE&OP,(const char*x){while(*x)P(*x++);RT}
+	I FWRITE&OP<(const char*x){while(*x&&IS(*x))x++;while(*x)P(*x++);RT}
+	I FWRITE&OP()(const char*x){while(*x)P(*x++);RT}I FWRITE&OP,(const SS & x){*this,x.c_str();RT}I FWRITE&OP()(const SS & x){*this(x.c_str());RT}I FWRITE&OP()(lf x,int y){WL;RT}I FWRITE&OP()(llf x,int y){WL;RT}};FWRITE<CHARP>out;
 // DONE I/O ------------------------------------------------------------------------------------------------------>
-#include <utility>
 #include <algorithm>
+#include <utility>
 #define NL '\n'
-#define W '0'
-#define B '1'
-#define E ' '
-#define INF 2000
-#define check(r,c) ((r>=0&&r<5&&c>=0&&c<5))
 
 using namespace std;
 
-int rr[8] = {-2, -2,  2, 2, -1,  1, -1, 1};
-int cc[8] = {-1,  1, -1, 1, -2, -2,  2, 2};
-char b[5][5], orig[5][5] = {{ B, B, B, B, B },
-			    { W, B, B, B, B },
-			    { W, W, E, B, B },
-			    { W, W, W, W, B },
-			    { W, W, W, W, W }};
-
-bool checkboard(){
-	for(int i=0;i<5;i++){
-		for(int j=0;j<5;j++) 
-			if(orig[i][j]!=b[i][j]) return false;
-	}
-	return true;
-}
-
-void printboard(){
-	for(int i=0;i<5;i++){
-		for(int j=0;j<5;j++) out,b[i][j],' ';
-		out,NL;
-	} out,NL;
-}
-
-int solve(int level, int er, int ec, int pr, int pc){
-	if(level > 10) return INF;
-	if(checkboard()) return level;
-	int ans = INF, t;
-	for(int i=0;i<8;i++){
-		int nr=er+rr[i], nc=ec+cc[i];
-		if(check(nr, nc) && (nr != pr || nc != pc)){
-			swap(b[nr][nc],b[er][ec]);
-			t = solve(level+1, nr, nc, er, ec);
-			ans = ::min(ans, t);
-			swap(b[er][ec],b[nr][nc]);
-		}
-	}
-	return ans;
-}
+int aa[1001];
 
 int main(){
 #ifdef LOCAL
 	freopen("input.1", "r", stdin);
 #endif
-	for(int t=in;t--;){
-		int r,c,ans;
-		for(int i=0;i<5;i++){
-			for(int j=0;j<5;j++){
-				b[i][j]=in;
-				if(b[i][j] == E) r=i,c=j;
-			}
-		}
-		ans = solve(0, r, c, -1, -1);
-		if(ans > 11) out,"Unsolvable in less than 11 move(s).\n";
-		else out,"Solvable in ",ans," move(s).\n";
+	int n,c,i,ta,ans=0,t=0; 
+	in,n,c;
+	for(int i=0;i<n;i++){
+		in,aa[i];
+		if(aa[i]+t<=c) t+=aa[i],ans++;
 	}
+	for(i=1;n-i>ans;i++){
+		t=ta=0;
+		for(int j=i;j<n;j++) if(aa[j]+t<=c) t+=aa[j],ta++;	
+		ans = ::max(ans, ta);
+	}
+	out,ans,NL;
 	return 0;
 }
