@@ -40,29 +40,44 @@ x=-x;while(y--){x*=10;x-=floor(x*0.1)*10;P(((int)x)%10+'0');}}else if(x>=0)*this
 #define WU(S) if(x){UC s[S],c=0;while(x)s[c++]=x%10+'0',x/=10;while(c--)P(s[c]);}else P('0')
 template<typename T>struct FWRITE{T P;I FWRITE&OP,(int x){WI(10);RT}I FWRITE&OP()(int x){WI(10);RT}I FWRITE&OP,(uint x){WU(10);RT}I FWRITE&OP()(uint x){WU(10);RT}I FWRITE&OP,(ll x){WI(19);RT}I FWRITE&OP()(ll x){WI(19);RT}I FWRITE&OP,(ull x){WU(20);RT}I FWRITE&OP()(ull x){WU(20);RT}I FWRITE&OP,(ul x){WU(20);RT}I FWRITE&OP()(ul x){WU(20);RT}I FWRITE&OP,(char x){P(x);RT}I FWRITE&OP()(char x){P(x);RT}I FWRITE&OP,(const char*x){while(*x)P(*x++);RT}I FWRITE&OP()(const char*x){while(*x)P(*x++);RT}I FWRITE&OP,(const SS & x){*this,x.c_str();RT}I FWRITE&OP()(const SS & x){*this(x.c_str());RT}I FWRITE&OP()(lf x,int y){WL;RT}I FWRITE&OP()(llf x,int y){WL;RT}};FWRITE<CHARP>out;
 // DONE I/O ------------------------------------------------------------------------------------------------------>
+#include <queue>
 #include <algorithm>
 #include <utility>
 #define NL '\n'
+#define INF 1000001
+#define MP(x,y) make_pair(x,y)
+#define PII pair<int,int>
+#define F first
+#define S second
 
 using namespace std;
 
-int aa[1001];
+int floors[1000000];
+bool visited[1000000];
+
+void solve(int f, int s, int g, int u, int d){
+	queue<PII >qq;
+	qq.push(MP(s,0));
+	while(!qq.empty()){
+		PII p = qq.front(); qq.pop();	
+		if(visited[p.F]) continue;
+		visited[p.F]=true; floors[p.F]=p.S;
+		if(p.F+u<f) qq.push(MP(p.F+u,p.S+1));
+		if(p.F-d>=0) qq.push(MP(p.F-d,p.S+1));
+	}
+	if(floors[g]==INF) out,"use the stairs\n";
+	else out,floors[g],NL;
+}
 
 int main(){
 #ifdef LOCAL
 	freopen("input.1", "r", stdin);
 #endif
-	int n,c,i,ta,ans=0,t=0; 
-	in,n,c;
-	for(int i=0;i<n;i++){
-		in,aa[i];
-		if(aa[i]+t<=c) t+=aa[i],ans++;
-	}
-	for(i=1;n-i>ans;i++){
-		t=ta=0;
-		for(int j=i;j<n;j++) if(aa[j]+t<=c) t+=aa[j],ta++;	
-		ans = ::max(ans, ta);
-	}
-	out,ans,NL;
+	int f,s,g,u,d;
+	in,f,s,g,u,d;
+	s--,g--;
+	fill(visited,visited+f,false);
+	fill(floors,floors+f,INF);
+	solve(f,s,g,u,d);
 	return 0;
 }
