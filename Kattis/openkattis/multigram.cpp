@@ -50,9 +50,38 @@ template<typename T>struct FWRITE{T P;I FWRITE&OP,(int x){WI(10);RT}I FWRITE&OP(
 
 using namespace std;
 
+int alph[26],temp[26];
+char ss[100002];
+
+void solve(int size){
+	int ans=-1;
+	for(int i=1;i<=size/2;i++){
+		if(size%i) continue; // Can't be that size
+		// Initialize alph counts
+		fill(alph,alph+26,0);
+		fill(temp,temp+26,0);
+		// Count letters in part 1
+		for(int k=0;k<i;k++) alph[ss[k]-'a']++;
+		// Foreach remaining part see if count of letters is equal
+		for(int k=1,sign=1;k<size/i;k++,sign*=-1){
+			for(int j=k*i;j<(k+1)*i;j++) temp[ss[j]-'a']+=sign;
+			for(int j=0;j<26;j++) if(temp[j]!=0&&temp[j]!=alph[j]) goto done;
+		}
+		ans=i;
+		break;
+done:
+		continue;
+	}
+	if(ans<0)out,ans,NL;
+	else out(ss,ans),NL;
+}
+
 int main(){
 #ifdef LOCAL
 	freopen("input.1", "r", stdin);
 #endif
+	int i=0;
+	while(in,ss[i++]);
+	solve(i-1);
 	return 0;
 }
