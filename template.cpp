@@ -43,9 +43,10 @@ template<typename T>struct FWRITE{T P;I FWRITE&OP,(int x){WI(10);RT}I FWRITE&OP(
 #include <cstring>
 #include <utility>
 #include <algorithm>
+#include <vector>
 #define NL '\n'
 #define PII pair<int,int>
-#define VPII pair<PII >
+#define VPII vector<PII >
 #define MP(x,y) make_pair(x,y)
 #define F first
 #define S second
