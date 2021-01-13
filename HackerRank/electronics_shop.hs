@@ -1,11 +1,17 @@
+import Control.Monad
+
 solve' :: [Int] -> Int
 solve' [] = -1
 solve' ns = maximum ns
 
-solve :: [Int] -> Int
-solve (b:n:_:ns) = solve' [k + m | k <- keys, m <- mice, k+m <= b]
-    where
-        (keys, mice) = splitAt n ns
+solve :: Int -> [Int] -> [Int] -> Int
+solve b keys mice = solve' $ filter (<=b) $ (+) <$> keys <*> mice
+        
+ril :: IO [Int]
+ril = map read . words <$> getLine
 
 main :: IO ()
-main = interact $ show . solve . map read . words
+main = do
+    [[b, _, _], keys, mice] <- replicateM 3 ril
+    putStrLn $ show $ solve b keys mice
+
