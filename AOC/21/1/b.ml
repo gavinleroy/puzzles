@@ -21,27 +21,29 @@ let uncurry f = fun (a, b) -> f a b
 exception Impossible
 
 let get_int () =
-  (try Some
-         (input_line stdin)
+  (try Some (input_line stdin)
    with _ -> None)
   |> function
-  | (Some s) ->
-    int_of_string_opt s
-  | None  ->
-    None
+  | (Some s) -> int_of_string_opt s
+  | None  -> None
 
-let rec fold_ans v o1 o2 o3 o4 = match o1, o2, o3, o4 with
-  | (Some c1), (Some c2), (Some c3), (Some c4) ->
-    fold_ans (v + pt c1 c2 c3 c4)
+let rec fold_ans v o1 o2 o3 o4 =
+  match o1, o2, o3, o4 with
+  | (Some c1), (Some _), (Some _), (Some c4) ->
+    fold_ans (v + pt c1 c4)
       o2 o3 o4 (get_int ())
   | _, _, _, None -> v
   | _ -> raise Impossible
 
-and pt v1 v2 v3 v4 =
-  if (v1 + v2 + v3) < (v2 + v3 + v4) then
+and pt v1 v4 =
+  if v1 < v4 then
     1
   else 0
 
 let () =
-  fold_ans 0 (get_int ())(get_int ())(get_int ())(get_int ())
+  let f = get_int ()
+  and s = get_int ()
+  and t = get_int ()
+  and l = get_int () in
+  fold_ans 0 f s t l
   |> print_int

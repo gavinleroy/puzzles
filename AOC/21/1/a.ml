@@ -18,27 +18,27 @@ let curry f = fun a b -> f (a, b)
 let uncurry f = fun (a, b) -> f a b
 (* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *)
 
+exception Impossible
+
 let get_int () =
   (try Some
          (input_line stdin)
    with _ -> None)
   |> function
-  | (Some s) ->
-    int_of_string_opt s
-  | None  ->
-    None
+  | (Some s) -> int_of_string_opt s
+  | None  -> None
 
 let rec fold_ans v o1 o2 = match o1, o2 with
-  | None, (Some c) ->
-    fold_ans 0 o2 (get_int ())
-  | (Some c), None -> v
   | (Some p), (Some c) ->
-    fold_ans (if c > p then
-                v + 1
-              else v) o2 (get_int ())
-  | None, None ->
-    fold_ans 0 o1 (get_int ())
+    get_int ()
+    |> fold_ans (if p < c then
+                   v + 1
+                 else v) o2
+  | _, None -> v
+  | _ -> raise Impossible
 
 let () =
-  fold_ans 0 None None
+  let f = get_int ()
+  and s = get_int () in
+  fold_ans 0 f s
   |> print_int
