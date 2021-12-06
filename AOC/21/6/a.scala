@@ -3,7 +3,7 @@
 import scala.io.StdIn.readLine
 import scala.collection.immutable
 
-object Day6_a {
+object A {
   def main(args: Array[String]): Unit = {
     val init = readLine()
       .split(",")
