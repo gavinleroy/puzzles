@@ -8,3 +8,4 @@
 | 4   | OCaml   | 
 | 5   | Rust    | 
 | 6   | Scala   | 
+| 7   | Julia   | 
