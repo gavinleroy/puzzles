@@ -105,7 +105,8 @@
                                         ,find-two)))))
     (fold (lambda (v acc)
             (+ (* acc 10) v)) 0
-            (map (lambda (d) (decode d dcdr)) to-decode))))
+            (map (lambda (d)
+                   (decode d dcdr)) to-decode))))
 
 (define-syntax-rule (solve)
   (reduce + 0
