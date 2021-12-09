@@ -1,7 +1,7 @@
 # Advent of Code 2021
 
 | Day | Lang    |
-| --: | :-----: |
+| --- | ------- |
 |   1 | <p><a href="https://ocaml.org/">OCaml</a></p> | 
 |   2 | <p><a href="https://www.rust-lang.org/">Rust</a></p> | 
 |   3 | <p><a href="https://www.haskell.org/">Haskell</a></p> |
