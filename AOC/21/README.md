@@ -21,5 +21,11 @@
 |   9 | <p><a href="https://www.scala-lang.org/">Scala 3</a></p> | 
 |  10 | <p><a href="https://www.gnu.org/software/guile/">Guile</a></p> | 
 
+</td><td>
+
+| Day | Lang    |
+| --- | ------- |
+|  11 | <p><a href="https://www.rust-lang.org/">Rust</a></p> | 
+
 </td></tr>
 </table>
