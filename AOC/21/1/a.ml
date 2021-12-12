@@ -1,5 +1,4 @@
-(* Programming Template OCaml
- * ~ Gavin Gray ~ *)
+(* Gavin Gray AOC 21 *)
 
 (* ~~~~~~~~~~~~~~~~~~~~ IO functions ~~~~~~~~~~~~~~~~~~~~~~~~~~ *)
 let create_reader fmt f = Scanf.(bscanf Scanning.stdin fmt f)
