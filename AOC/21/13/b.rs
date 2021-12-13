@@ -71,6 +71,7 @@ fn main() {
     folds.iter().for_each(|f| fold(&mut paper, f));
     // NOTE make sure you have enough terminal space
     //      to see the answer :)
+    print!("\x1bc"); // clearscreen
     paper
         .iter()
         .for_each(|(x, y)| print!("\x1b[{};{}H#", y + 2, x + 1));
