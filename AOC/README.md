@@ -1,8 +1,6 @@
 # Advent of Code :christmas_tree:
 
-```
-<!-- language: lang-none -->
-
+```none
       __,_,_,___)          _______
     (--| | |             (--/    ),_)        ,_) 
        | | |  _ ,_,_        |     |_ ,_ ' , _|_,_,_, _  ,
