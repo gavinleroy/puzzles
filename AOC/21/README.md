@@ -34,6 +34,7 @@
 </td><td>
 
 | Day | Lang    |
+| --- | ------- |
 |  16 | <p><a href="https://www.haskell.org/">Haskell</a></p> |
 
 </td></tr>
