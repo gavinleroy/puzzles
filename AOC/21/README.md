@@ -31,5 +31,10 @@
 |  14 | <p><a href="https://ocaml.org/">OCaml</a></p> | 
 |  15 | <p><a href="https://www.scala-lang.org/">Scala 3</a></p> | 
 
+</td><td>
+
+| Day | Lang    |
+|  16 | <p><a href="https://www.haskell.org/">Haskell</a></p> |
+
 </td></tr>
 </table>
