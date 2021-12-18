@@ -37,6 +37,7 @@
 | --- | ------- |
 |  16 | <p><a href="https://www.haskell.org/">Haskell</a></p> |
 |  17 | <p><a href="https://julialang.org/">Julia</a></p> | 
+|  18 | <p><a href="https://www.haskell.org/">Haskell</a></p> |
 
 </td></tr>
 </table>
