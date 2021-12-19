@@ -70,7 +70,6 @@ object B {
           } yield (i, beaconsT, dir)
         val (i, beac, dir) = matched.head
         val rem = remaining.filter(_._2 != i)
-        // val beac = beacons ++ beaconsT
         scanners.update(i, Some(dir))
         loop(rem, beac)
       }
