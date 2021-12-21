@@ -41,5 +41,11 @@
 |  19 | <p><a href="https://www.scala-lang.org/">Scala 3</a></p> | 
 |  20 | <p><a href="https://www.scala-lang.org/">Scala 3</a></p> | 
 
+</td><td>
+
+| Day | Lang    |
+| --- | ------- |
+|  21 | <p><a href="https://www.rust-lang.org/">Rust</a></p> | 
+
 </td></tr>
 </table>
