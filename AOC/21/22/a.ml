@@ -40,7 +40,7 @@ let volume ((x1, y1, z1), (x2, y2, z2)) =
   (y2 -- y1 ++ Int64.one) <**
   (z2 -- z1 ++ Int64.one)
 
-let rec intersect_cuboid
+let intersect_cuboid
     ((x1, y1, z1), (x2, y2, z2))
     ((x1', y1', z1'), (x2', y2', z2')) =
   if not (x2 < x1' || x2' < x1 ||
