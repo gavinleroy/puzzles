@@ -47,6 +47,7 @@
 | --- | ------- |
 |  21 | <p><a href="https://www.rust-lang.org/">Rust</a></p> | 
 |  22 | <p><a href="https://ocaml.org/">OCaml</a></p> | 
+|  23 | <p><a href="https://www.haskell.org/">Haskell</a></p> |
 
 </td></tr>
 </table>
