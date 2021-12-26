@@ -8,24 +8,22 @@ type Map[T] = Vector[Vector[T]]
 
 case class Posn(x:Int, y:Int)
 
-def getCross(p:Posn): Iterable[Posn] = {
+def getCross(p:Posn): Iterable[Posn] =
     Vector[Posn](
       Posn(p.x + 1, p.y),
       Posn(p.x - 1, p.y),
       Posn(p.x, p.y + 1),
       Posn(p.x, p.y - 1))
-}
 
-def mapVal[T](m:Map[T], p:Posn): Option[T] = p match {
-  case Posn(x, y) if x >= 0 && y >= 0
-      && y < m.length && x < m(0).length => {
-    Some (m(y)(x))
-  }
-  case _ => None
-}
+def mapVal[T](m:Map[T], p:Posn): Option[T] =
+  p match
+    case Posn(x, y) if x >= 0 && y >= 0
+        && y < m.length && x < m(0).length =>
+      Some (m(y)(x))
+    case _ => None
 
-def flood[T: Ordering](m: Map[T], elem: (T, Posn), delim: T): Set[Posn] = {
-  def loop(elem:(T, Posn), acc:Set[Posn]): Set[Posn] = {
+def flood[T: Ordering](m: Map[T], elem: (T, Posn), delim: T): Set[Posn] =
+  def loop(elem:(T, Posn), acc:Set[Posn]): Set[Posn] =
     getCross(elem._2)
       .filter(!acc.contains(_))
       .filter(!mapVal(m, _).isEmpty)
@@ -33,12 +31,10 @@ def flood[T: Ordering](m: Map[T], elem: (T, Posn), delim: T): Set[Posn] = {
       .filter(_._1 < delim)
       .foldLeft(acc)((acc, nelem) =>
         loop(nelem, acc + nelem._2))
-  };
   loop(elem, Set[Posn](elem._2))
-}
 
-object B {
-  def main(args: Array[String]): Unit = {
+object B:
+  def main(args: Array[String]): Unit =
     var m = io.Source.stdin.getLines()
       .map(_.toVector.map(_.asDigit))
       .toVector;
@@ -57,5 +53,3 @@ object B {
       .takeRight(3)
       .product;
     println(a);
-  }
-}
