@@ -7,8 +7,7 @@ import scala.io.StdIn.readLine
 type Map[T] = Vector[Vector[T]]
 type Posn = (Int, Int)
 
-object A {
-
+object A:
   def idx[T](map: Map[T], p: Posn): T = map { p._2 } { p._1 }
 
   def set[T](map: Map[T], p: Posn, v: T): Map[T] =
@@ -16,18 +15,14 @@ object A {
 
   def add(p1: Posn, p2: Posn): Posn = (p1._1 + p2._1, p1._2 + p2._2)
 
-  def neighbors[T](map: Map[T], p: Posn): Vector[Posn] = {
+  def neighbors[T](map: Map[T], p: Posn): Vector[Posn] =
     Vector((-1, 0), (1, 0), (0, -1), (0, 1))
       .map(add(p, _))
-      .filter { (v) =>
-        {
+      .filter( (v) =>
           var (x, y) = v
-          x >= 0 && y >= 0 && x < map { 0 }.length && y < map.length
-        }
-      }
-  }
+          x >= 0 && y >= 0 && x < map { 0 }.length && y < map.length)
 
-  def dijkstra(map: Map[Int], src: Posn, tgt: Posn): Long = {
+  def dijkstra(map: Map[Int], src: Posn, tgt: Posn): Long =
     var vs = HashSet[Posn]()
     var dist =
       Vector.fill(map.length)(Vector.fill(map { 0 }.length)(Long.MaxValue))
@@ -37,32 +32,26 @@ object A {
         next: HashSet[Posn],
         ds: Map[Long],
         vs: HashSet[Posn]
-    ): Long = {
-
+    ): Long =
       var p = next.min(Ordering.by(idx(ds, _)))
-      if (p == tgt)
+      if p == tgt then
         return idx(ds, p)
 
-      var (n_ds, nn_next) = neighbors(map, p).foldLeft((ds, next - p)) {
+      var (n_ds, nn_next) = neighbors(map, p).foldLeft((ds, next - p)) (
         (acc, posn) =>
-          if (vs.contains(posn))
+          if vs.contains(posn) then
             acc
           else
             (
-              (if (idx(acc._1, p) + idx(map, posn) < idx(acc._1, posn))
+              (if idx(acc._1, p) + idx(map, posn) < idx(acc._1, posn) then
                  set(acc._1, posn, idx(acc._1, p) + idx(map, posn))
                else acc._1),
               acc._2 + posn
             )
-      }
+      )
       loop(nn_next, n_ds, vs + p)
-    }
-
     loop(next + src, set(dist, src, 0), vs)
-  }
 
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit =
     var m = io.Source.stdin.getLines().map(_.toVector.map(_.asDigit)).toVector;
     println(dijkstra(m, (0, 0), (m.length - 1, m { 0 }.length - 1)))
-  }
-}
