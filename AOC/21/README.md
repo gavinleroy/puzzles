@@ -1,5 +1,12 @@
 # Advent of Code 2021
 
+For each part of every day there exists a stand-alone solution which can be compiled/interpreted using the language's basic tooling. Each program accepts input from stdin and will print the answer to stdout.
+
+I don't claim to be exceptionally great with any of these languages and feedback is appreciated. Notably, this year I wanted to try and use Scala as I will need it for a course next semester.
+Each solution has zero dependencies, exceptions to this rule are OCaml's *str* module and Haskell's *parsec, search-algorithms, vector, and split* modules.
+
+Runtime is not always optimal, days: `17`, `19`, and `23` have particularly bad solutions. 
+
 <table>
 <tr><td>
 
