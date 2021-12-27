@@ -7,26 +7,35 @@ struct Area
     y2 :: Int
 end
 
-any(f, it) = foldl((x, y) -> x || y, map(f, it); init=false)
-
-simulate(x, y) = Channel{Tuple{Int, Int}}() do c
-    ix, iy = 0, 0
-    while(true)
-        ix += x; iy += y
-        x = x > 0 ? x-1 : 0
-        y -= 1; put!(c, (ix, iy))
+simulate(v0, a ::Area) = Channel{Vector{Int}}() do c
+    v = [0, 0]
+    while(v[1] <= a.x2 && v[2] >= a.y1)
+        v = v + v0
+        v0 -= [1, 1]
+        v0[1] = v0[1] < 0 ? 0 : v0[1]
+        put!(c, v)
     end
 end
 
-# FIXME I'll come back to this after the semester
-#       and make it faster :)
+function hit(xv, yv, a ::Area)
+    for pos in simulate([xv, yv], a)
+        if a.x1 <= pos[1] <= a.x2 && a.y1 <= pos[2] <= a.y2
+            return true
+        end
+    end
+    return false
+end
+
 function solve(a ::Area)
-    pred = posn -> posn[1] <= a.x2 && posn[2] >= a.y1
-    inarea = posn -> a.x1 <= posn[1] && posn[1] <= a.x2 && posn[2] >= a.y1 && posn[2] <= a.y2
-    count(map(function(p)
-        line = Iterators.takewhile(pred, simulate(p...))
-        any(inarea, line)
-      end, Iterators.product(0:300, -300:300)))
+    ans = 0
+    for xv in 0:a.x2
+        for yv in a.y1:(-a.y1 - 1)
+            if hit(xv, yv, a)
+                ans += 1
+            end
+        end
+    end
+    ans
 end
 
 # Main
