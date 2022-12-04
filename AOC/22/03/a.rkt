@@ -1,5 +1,7 @@
 #lang racket
 
+;; Gavin Gray, AOC 2022 Day 3
+
 (define (points c)
   (define an (char->integer #\a))
   (define An (char->integer #\A))

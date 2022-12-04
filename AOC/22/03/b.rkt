@@ -1,5 +1,7 @@
 #lang racket
 
+;; Gavin Gray, AOC 2022 Day 3
+
 (require racket/match
          racket/set)
 
