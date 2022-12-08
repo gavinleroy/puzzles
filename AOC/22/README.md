@@ -14,9 +14,10 @@
 </td><td>
 
 | Day | Lang                                                          |
-|-----|---------------------------------------------------------------|
+| --- | ------------------------------------------------------------- |
 | 6   | <p><a href="https://shenlanguage.org/index.html">Shen</a></p> |
 | 7   | <p><a href="https://ocaml.org/">OCaml</a></p>                 |
+| 8   | <p><a href="https://racket-lang.org/">Racket</a></p>          |
 
 </td><td>
 
