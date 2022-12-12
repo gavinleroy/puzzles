@@ -19,13 +19,14 @@
 | 7   | <p><a href="https://ocaml.org/">OCaml</a></p>                 |
 | 8   | <p><a href="https://racket-lang.org/">Racket</a></p>          |
 | 9   | <p><a href="https://ocaml.org/">OCaml</a></p>                 |
+| 10  | <p><a href="https://ocaml.org/">OCaml</a></p>                 |
 
 </td><td>
 
-<!-- |   7 | <p><a href="https://julialang.org/">Julia</a></p> |  -->
-<!-- |   8 | <p><a href="https://www.gnu.org/software/guile/">Guile</a></p> |  -->
-<!-- |   9 | <p><a href="https://www.scala-lang.org/">Scala 3</a></p> |  -->
-<!-- |  10 | <p><a href="https://www.gnu.org/software/guile/">Guile</a></p> |  -->
+| Day | Lang |
+| --- | ---- |
+
+</td><td>
 
 <!-- | Day | Lang    | -->
 <!-- | --- | ------- | -->
