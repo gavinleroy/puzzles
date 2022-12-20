@@ -26,6 +26,7 @@
 | Day | Lang                                                 |
 | --- | ---------------------------------------------------- |
 | 11  | <p><a href="https://racket-lang.org/">Racket</a></p> |
+| 12  | <p><a href="https://racket-lang.org/">Racket</a></p> |
 
 </td><td>
 
