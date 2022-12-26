@@ -29,18 +29,20 @@
 | 12  | <p><a href="https://racket-lang.org/">Racket</a></p> |
 | 13  | <p><a href="https://racket-lang.org/">Racket</a></p> |
 | 14  | <p><a href="https://ocaml.org/">OCaml</a></p>        |
+| 15  | <p><a href="https://ocaml.org/">OCaml</a></p>        |
 
 </td><td>
 
-<!-- | Day | Lang    | -->
-<!-- | --- | ------- | -->
+| Day | Lang |
+| --- | ---- |
+
 <!-- |  11 | <p><a href="https://www.rust-lang.org/">Rust</a></p> |  -->
 <!-- |  12 | <p><a href="https://www.haskell.org/">Haskell</a></p> | -->
 <!-- |  13 | <p><a href="https://www.rust-lang.org/">Rust</a></p> |  -->
 <!-- |  14 | <p><a href="https://ocaml.org/">OCaml</a></p> |  -->
 <!-- |  15 | <p><a href="https://www.scala-lang.org/">Scala 3</a></p> |  -->
 
-<!-- </td><td> -->
+</td><td>
 
 <!-- | Day | Lang    | -->
 <!-- | --- | ------- | -->
