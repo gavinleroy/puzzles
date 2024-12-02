@@ -75,19 +75,18 @@
 
 ;; Update your analysis by handling situations where the Problem Dampener can remove a single level from unsafe reports. How many reports are now safe?
 
-(defun remove-at (list i)
-  (loop for j from 0 below (length list)
-        unless (= i j)
-          collect (nth j list)))
-
 (defun safe-report-p-2 (report)
   (when (safe-report-p report)
     (return-from safe-report-p-2 t))
   ;; For each index i, remove the ith element and check if the report is safe
-  (loop for i from 0 below (length report)
-        for new-report = (remove-at report i)
-        when (safe-report-p new-report)
-          return t))
+  (loop for (item . rest) on report
+        when (safe-report-p (append prefix rest))
+          return t
+        collecting item into prefix))
+
+(loop for (item . rest) on '(1 2 3 4 5)
+      collect (append prefix rest)
+      collecting item into prefix)
 
 (defun part-2 ()
   (length (remove-if-not #'safe-report-p-2 (read-input "input.data"))))
