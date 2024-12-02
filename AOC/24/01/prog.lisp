@@ -1,8 +1,8 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (ql:quickload :split-sequence :str :fset))
+  (ql:quickload '(:split-sequence :str :fset)))
 
 (defpackage :day01
-  (:use :cl :split-sequence :str))
+  (:use :cl :str))
 
 (in-package :day01)
 
