@@ -77,8 +77,7 @@
 
 (defun safe-report-p-2 (report)
   (when (safe-report-p report)
-    (return-from safe-report-p-2 t))
-  ;; For each index i, remove the ith element and check if the report is safe
+    (return t))
   (loop for (item . rest) on report
         when (safe-report-p (append prefix rest))
           return t
