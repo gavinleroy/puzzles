@@ -1,5 +1,5 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (ql:quickload '(:stri :trivia)))
+  (ql:quickload '(:str :trivia)))
 
 (defpackage :day07
   (:import-from :str #:split #:replace-first)
