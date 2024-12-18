@@ -284,13 +284,12 @@
                     (or (member p to-push :test #'equal)
                         (some (lambda (m) (equal p (cdr m))) moving))))
          (to-move
-           (loop for pushing = (pop to-push)
+           (loop while pushing
+                 for pushing = (pop to-push)
                  for p = (pos+ pushing dir)
                  for p-r = (pos+ p '(0 . 1))
                  for p-l = (pos+ p '(0 . -1))
                  for c = (gethash p grid)
-                 unless pushing
-                   return moving
                  when (eq c #\#)
                    return nil
                  when (member c '(#\. #\O #\[ #\]) :test #'eq)
