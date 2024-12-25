@@ -117,13 +117,6 @@
             (#\V (cons 1 1))
             (#\> (cons 1 2))))
 
-(defun map-values (map)
-  (let ((s (fset:empty-set)))
-    (fset:do-map (k v map)
-      (declare (ignore k))
-      (fset:includef s v))
-    s))
-
 (defun directions (from to key)
   (labels ((path-to-moves (path)
              (flet ((pos- (p2 p1)
@@ -154,7 +147,7 @@
                        until (and (= x tx) (= y ty)))))))
     (let* ((start (fset:@ key from))
            (end (fset:@ key to))
-           (points (map-values key))
+           (points (fset:range key))
            (paths (list
                    (append (move-line start (cons (car start) (cdr end)))
                            (cdr (move-line (cons (car start) (cdr end)) end)))
