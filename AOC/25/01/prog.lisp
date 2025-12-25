@@ -1,7 +1,8 @@
+(require :asdf)
 (asdf:load-system :cl-ppcre)
 
 (defpackage :day01
-  (:use :cl :cl-ppcre))
+  (:use :cl))
 
 (in-package :day01)
 

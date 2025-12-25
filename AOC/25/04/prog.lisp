@@ -1,12 +1,14 @@
+(require :uiop)
+
 (defpackage :day04
   (:use :cl))
 
 (in-package :day04)
 
 (defun parse (path) 
-  (let* ((ls (uiop:read-file-lines path)
-          (n (length ls)) 
-          (m (length (car ls))))) 
+  (let* ((ls (uiop:read-file-lines path))
+         (n (length ls)) 
+         (m (length (car ls)))) 
     (make-array (list n m)
                 :element-type 'character 
                 :initial-contents (mapcar (lambda (s) (coerce s 'list))

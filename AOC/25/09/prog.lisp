@@ -1,7 +1,8 @@
+(require :asdf)
 (asdf:load-system :str)
 
 (defpackage :day09
-  (:use :cl :str))
+  (:use :cl))
 
 (in-package :day09)
 
