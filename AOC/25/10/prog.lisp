@@ -46,16 +46,14 @@
   (mapcar #'parse-line (uiop:read-file-lines path)))
 
 (defconstant +initial-lights+ #*0000000000000000)
-(defconstant +initial-counters+ #(0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0))
-(defun counter (v1 v2) (map 'vector #'+ v1 v2))
 
-(defun make-buttons (buttons initial update)
+(defun make-buttons (buttons)
   (labels ((compile-button (seq)
-             (let ((buttons (copy-seq initial)))
+             (let ((buttons (copy-seq +initial-lights+)))
                (dolist (b seq)
                  (setf (aref buttons b) 1))
                (lambda (bits) 
-                 (funcall update (copy-seq bits) buttons)))))
+                 (bit-xor (copy-seq bits) buttons)))))
     (mapcar #'compile-button buttons)))
 
 (defun make-target (tgt initial)
@@ -65,69 +63,58 @@
         do (incf (aref lights i) c)
         finally (return lights)))
   
-(defun toggle-distance (target buttons &key update)
-  (multiple-value-bind (initial update) 
-      (ecase update
-        (toggle (values +initial-lights+ #'bit-xor))
-        (count (values +initial-counters+ #'counter)))
-    (loop with q = (make-queue :initial-contents (list (list 0 initial)))
-          with buttons = (make-buttons buttons initial update)
-          for (d lights) = (dequeue q)
-          while (< d 15)
-          do (loop for button in buttons
-                   for k from 0
-                   for step = (funcall button lights)
-                   when (equalp step target)
-                     do (return-from toggle-distance (1+ d))
-                   do (enqueue (list (1+ d) step) q)))))
+(defun toggle-distance (target buttons)
+  (loop with q = (make-queue :initial-contents (list (list 0 +initial-lights+)))
+         with buttons = (make-buttons buttons)
+         for (d lights) = (dequeue q)
+         while (< d 15)
+         do (loop for button in buttons
+                  for k from 0
+                  for step = (funcall button lights)
+                  when (equalp step target)
+                    do (return-from toggle-distance (1+ d))
+                  do (enqueue (list (1+ d) step) q))))
+
+(defun contains-duplicates-p (ls)
+  (setf ls (sort ls #'<))
+  (loop for (a b) on ls
+        while b 
+        thereis (= a b)))
 
 (defun solve-counters (targets buttons)
-  (let* ((num-buttons (length buttons))
-         (vars (loop for i below num-buttons 
+  ;; HACK: If all buttons are disjoint, we have the solution
+  (unless (contains-duplicates-p (apply #'concatenate 'list buttons))
+    (return-from solve-counters 
+                 (reduce #'+ (mapcar (lambda (b) (elt targets (first b))) 
+                                     buttons))))
+  (let* ((vars (loop for b in buttons 
+                     for i from 0
                      collect (intern (format nil "B~D" i))))
          (objective `(min (+ ,@vars)))
+         (eq-constraints (loop for target-val in targets
+                               for counter-idx from 0
+                               collect `(= (+ ,@(loop for button in buttons
+                                                      for var in vars
+                                                      when (member counter-idx button)
+                                                        collect var)) 
+                                         ,target-val)))
          (constraints 
           (append
-           (loop for target-val in targets
-                 for counter-idx from 0
-                 collect 
-                 `(= (+ ,@(loop for button-vector in buttons
-                                for var in vars
-                                for coef = (elt button-vector counter-idx)
-                                unless (zerop coef)
-                                collect `(* ,coef ,var)))
-                     ,target-val))
-           (list `(integer ,@vars))
-           (loop for var in vars collect `(>= ,var 0)))))
+            eq-constraints
+            (loop for var in vars 
+                  nconc `((integer ,var) (<= 0 ,var))))))
     (solution-objective-value 
       (solve-problem 
         (parse-linear-problem 
           objective 
           constraints)))))
-      
-(defun make-matrix (buttons size)
-  (loop for row in buttons
-        collect (loop with arr = (make-array size :initial-element 0) 
-                      for i in row
-                      do (incf (aref arr i))
-                      finally (return (coerce arr 'list)))))
 
 (defun counter-distance (target buttons)
-  (let ((matrix (make-matrix buttons (length target))))
-    (handler-case (solve-counters target matrix)
-      ;; NOTE: There's one problem that has completely independent 
-      ;; buttons: [.#.#] (0,2) (1,3) {7,6,7,6} which results in a 
-      ;; "no constraints" error from GLPK, these can easily be solved with BFS
-      (error (condition)
-        (declare (ignore condition))
-        (toggle-distance (make-target target +initial-counters+) buttons 
-                         :update 'count))
-      (:no-error (n) n)))) 
+  (solve-counters target buttons)) 
        
 (defun solve (path)
   (loop for (lights joltage buttons) in (parse path)
-        sum (toggle-distance (make-target lights +initial-lights+) buttons 
-                             :update 'toggle) into part-1
+        sum (toggle-distance (make-target lights +initial-lights+) buttons) into part-1
         sum (counter-distance joltage buttons) into part-2
         finally (return (values part-1 part-2))))
         
