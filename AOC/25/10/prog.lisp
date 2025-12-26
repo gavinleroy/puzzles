@@ -34,11 +34,7 @@
                             (lambda (s) (substitute #\) #\} s))))
          (chunks (mapcar (lambda (s) (read-from-string (funcall sanitize s))) 
                   (str:split " " line))))
-    (list (loop for c across (first chunks)
-                if (char= #\# c)
-                  collect 1
-                else 
-                  collect 0) 
+    (list (first chunks) 
           (first (reverse chunks))
           (subseq chunks 1 (1- (length chunks))))))
 
@@ -55,25 +51,24 @@
                (lambda (bits) 
                  (bit-xor (copy-seq bits) buttons)))))
     (mapcar #'compile-button buttons)))
-
-(defun make-target (tgt initial)
-  (loop with lights = (copy-seq initial) 
-        for c in tgt
-        for i from 0
-        do (incf (aref lights i) c)
-        finally (return lights)))
   
 (defun toggle-distance (target buttons)
-  (loop with q = (make-queue :initial-contents (list (list 0 +initial-lights+)))
-         with buttons = (make-buttons buttons)
-         for (d lights) = (dequeue q)
-         while (< d 15)
-         do (loop for button in buttons
-                  for k from 0
-                  for step = (funcall button lights)
-                  when (equalp step target)
-                    do (return-from toggle-distance (1+ d))
-                  do (enqueue (list (1+ d) step) q))))
+  (loop with target = (loop with tgt = (copy-seq +initial-lights+)
+                            for c across target 
+                            for i from 0
+                            when (char= #\# c) 
+                              do (setf (bit tgt i) 1)
+                            finally (return tgt))
+        with q = (make-queue :initial-contents (list (list 0 +initial-lights+)))
+        with buttons = (make-buttons buttons)
+        for (d lights) = (dequeue q)
+        while (< d 15)
+        do (loop for button in buttons
+                 for k from 0
+                 for step = (funcall button lights)
+                 when (equalp step target)
+                   do (return-from toggle-distance (1+ d))
+                 do (enqueue (list (1+ d) step) q))))
 
 (defun contains-duplicates-p (ls)
   (setf ls (sort ls #'<))
@@ -82,39 +77,36 @@
         thereis (= a b)))
 
 (defun solve-counters (targets buttons)
-  ;; HACK: If all buttons are disjoint, we have the solution
+  ;; HACK: If all buttons are disjoint, we have the solution.
+  ;; The CL-GLPK binding will raise an error if there's no constraints, 
+  ;; I think this is wrong, but they disagree.
   (unless (contains-duplicates-p (apply #'concatenate 'list buttons))
     (return-from solve-counters 
                  (reduce #'+ (mapcar (lambda (b) (elt targets (first b))) 
                                      buttons))))
   (let* ((vars (loop for b in buttons 
                      for i from 0
-                     collect (intern (format nil "B~D" i))))
-         (objective `(min (+ ,@vars)))
+                     collect (gensym i)))
          (eq-constraints (loop for target-val in targets
                                for counter-idx from 0
                                collect `(= (+ ,@(loop for button in buttons
                                                       for var in vars
                                                       when (member counter-idx button)
                                                         collect var)) 
-                                         ,target-val)))
-         (constraints 
-          (append
-            eq-constraints
-            (loop for var in vars 
-                  nconc `((integer ,var) (<= 0 ,var))))))
+                                         ,target-val))))
     (solution-objective-value 
       (solve-problem 
         (parse-linear-problem 
-          objective 
-          constraints)))))
+          `(min (+ ,@vars)) 
+          (append eq-constraints `((integer ,@vars)))))))) 
+      
 
 (defun counter-distance (target buttons)
   (solve-counters target buttons)) 
        
 (defun solve (path)
   (loop for (lights joltage buttons) in (parse path)
-        sum (toggle-distance (make-target lights +initial-lights+) buttons) into part-1
+        sum (toggle-distance lights buttons) into part-1
         sum (counter-distance joltage buttons) into part-2
         finally (return (values part-1 part-2))))
         
@@ -123,7 +115,5 @@
       (solve "./10.txt") 
     (format t "Part 1: ~A~%Part 2: ~D~%" p1 p2)))
      
-;PART 2 *ALLEGEDLY* TOO LOW!?!?!?! 
-;(solve "./10.txt")
 (eval-when (:execute) (run))
 
